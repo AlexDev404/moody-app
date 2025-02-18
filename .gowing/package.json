@@ -1,0 +1,23 @@
+{
+  "name": "baby-blog",
+  "version": "1.0.0",
+  "author": "AlexDev404",
+  "license": "ISC",
+  "homepage": "https://github.com/alexdev404/baby-blog#readme",
+  "description": "",
+  "main": "main.go",
+  "scripts": {
+    "gow": "gow run"
+  },
+  "dependencies": {
+    "gow": "^1.13.1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexdev404/baby-blog.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alexdev404/baby-blog/issues"
+  }
+}
