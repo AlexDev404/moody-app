@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>John | Doe - Week 1</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <h1>Week 1: Introduction to Go Web Apps</h1>
+    <p>
+      This week, I learned how to set up a basic web server in Go using the
+      `net/http` package.
+    </p>
+
+    <pre>
+      <code>
+        package main
+
+        import (
+            "log"
+            "net/http"
+        )
+
+        func home(w http.ResponseWriter, r *http.Request) {
+            w.Write([]byte("Hello from my first Go web app!"))
+        }
+
+        func main() {
+            mux := http.NewServeMux()
+            mux.HandleFunc("/", home)
+
+            log.Println("Server starting on :4000")
+            err := http.ListenAndServe(":4000", mux)
+            if err != nil {
+                log.Fatal(err)
+            }
+        }
+    </code>
+  </pre>
+    <p>
+      I also learned about routing, serving static files, and the importance of
+      a structured project layout.
+    </p>
+  </body>
+</html>

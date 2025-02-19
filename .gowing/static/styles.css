@@ -1,0 +1,71 @@
+/* Filename: static/styles.css  */
+
+/* Add the Universal Box Sizing Reset.
+   This ensures that the 'box-sizing' property
+   is set to border-box for all elements (*) and
+   their '::before' and '::after' psuedo-elements
+   NOTE: Always add this at the top of your stylesheet
+   
+*/
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 20px;
+  line-height: 1.5;
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
+
+p {
+  margin-bottom: 15px;
+  font-size: 1rem;
+}
+
+pre,
+code {
+  font-family: "Courier New", monospace;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+pre {
+  background-color: #f6f8fa;
+  padding: 15px;
+  border-radius: 4px;
+  border: 1px solid #e1e4e8;
+  overflow-x: auto;
+}
+
+code {
+  background-color: #f6f8fa;
+  padding: 2px 4px;
+}
+
+header {
+  padding: 20px 0;
+}
+
+.logo {
+  display: inline-block;
+  background-color: #333;
+  padding: 8px 15px;
+  margin-left: 20px;
+}
+
+.logo a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 18px;
+}

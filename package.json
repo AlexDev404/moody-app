@@ -1,0 +1,24 @@
+{
+  "name": "baby-blog",
+  "version": "1.0.0",
+  "author": "AlexDev404",
+  "license": "ISC",
+  "homepage": "https://github.com/alexdev404/baby-blog#readme",
+  "description": "",
+  "main": "main.go",
+  "scripts": {
+    "watch": "tailwindcss -i ./static/app.css -o ./static/styles.css --watch",
+    "build": "tailwindcss -i ./static/app.css -o ./static/styles.css",
+    "start": "npm run watch"
+  },
+  "dependencies": {
+    "tailwindcss": "^3.4.17"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexdev404/baby-blog.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alexdev404/baby-blog/issues"
+  }
+}
