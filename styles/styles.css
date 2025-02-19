@@ -1,0 +1,31 @@
+/*! tailwindcss v4.0.7 | MIT License | https://tailwindcss.com */
+.static {
+  position: static;
+}
+.mx-auto {
+  margin-inline: auto;
+}
+.inline-block {
+  display: inline-block;
+}
+.list-inside {
+  list-style-position: inside;
+}
+.list-disc {
+  list-style-type: disc;
+}
+.overflow-x-auto {
+  overflow-x: auto;
+}
+.border {
+  border-style: var(--tw-border-style);
+  border-width: 1px;
+}
+.no-underline {
+  text-decoration-line: none;
+}
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
