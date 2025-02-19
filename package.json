@@ -7,12 +7,13 @@
   "description": "",
   "main": "main.go",
   "scripts": {
-    "gow": "gow run"
+    "watch": "tailwindcss -i ./static/app.css -o ./static/styles.css --watch",
+    "build": "tailwindcss -i ./static/app.css -o ./static/styles.css",
+    "start": "npm run watch"
   },
   "dependencies": {
-    "gow": "^1.13.1"
+    "tailwindcss": "^3.4.17"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alexdev404/baby-blog.git"
