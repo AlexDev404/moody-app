@@ -30,7 +30,11 @@ func main() {
 	mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
 	// Register the handlers
 	mux.HandleFunc("/", homeHandler)
-	mux.HandleFunc("/week", weekHandler)
+	mux.HandleFunc("/week1", weekHandler)
+	mux.HandleFunc("/week2", weekHandler)
+	mux.HandleFunc("/week3", weekHandler)
+	mux.HandleFunc("/week4", weekHandler)
+	mux.HandleFunc("/week5", weekHandler)
 	// Start listening for requests (start the web server)
 	log.Println("Starting server on :4000")
 	err := http.ListenAndServe(":4000", mux)
