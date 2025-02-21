@@ -1,6 +1,6 @@
 # baby-blog
 
-This project just serves to satisfy the requirements of Assignment 1 - _N_ in the [CMPS3162 - Advanced Databases](https://doit.ub.edu.bz/course/view.php?id=70) course
+This project just serves to satisfy the requirements of Assignment 1 to _n_ in the [CMPS3162 - Advanced Databases](https://doit.ub.edu.bz/course/view.php?id=70) course
 
 # What this project is
 
