@@ -4,6 +4,7 @@ This project just serves to satisfy the requirements of Assignment 1 to _n_ in t
 
 # What this project is
 
+This is a blog and is intended to act as a journal for documenting what us students have learned for each week in the course.
 
 ## What it looks like
 
