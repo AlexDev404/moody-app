@@ -5,7 +5,7 @@ This project just serves to satisfy the requirements of Assignment 1 to _n_ in t
 # What this project is
 
 
-# What it looks like
+## What it looks like
 
 |Explanation|Preview|
 |:-----------|:-------:|
@@ -14,6 +14,6 @@ This project just serves to satisfy the requirements of Assignment 1 to _n_ in t
 
 There is nothing more left to show. This is a very simple project.
 
-# Technologies used
+## Technologies used
 
 This project makes use of Go's `net/http` while statically serving the stylesheets.
