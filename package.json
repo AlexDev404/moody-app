@@ -9,7 +9,8 @@
   "scripts": {
     "watch": "tailwindcss -i ./static/app.css -o ./static/styles.css --watch",
     "build": "tailwindcss -i ./static/app.css -o ./static/styles.css",
-    "start": "npm run watch"
+    "start": "npm run watch",
+    "gow": "~/go/bin/gow run"
   },
   "dependencies": {
     "tailwindcss": "^3.4.17"
