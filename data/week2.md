@@ -1,0 +1,46 @@
+# Week 2: Building a Basic HTTP Server in Go
+
+
+<p class="mb-4 text-lg">
+    This week, we focused on building a basic Hypertext Transfer Protocol (HTTP) server in Golang. We learned about HTTP requests and responses, including methods, headers, and status codes.
+  </p>
+  <p class="mb-4 text-lg">
+    Key topics included:
+    <ul class="list-disc list-inside mb-4">
+      <li>Routing</li>
+      <li>Middleware (logging)</li>
+      <li>A review of SQL and JS</li>
+    </ul>
+  </p>
+  <p class="mb-4 text-lg">
+    Homework included extending the HTTP server with middleware. There was also a quiz on Go, HTTP fundamentals, routing, middleware, and JS.
+  </p>
+  <p class="mb-4 text-lg">
+    In addition to the key topics, we also explored the following concepts in more detail:
+    <ul class="list-disc list-inside mb-4">
+      <li>Understanding the differences between HTTP/1.1 and HTTP/2</li>
+      <li>Implementing custom middleware for request logging and error handling</li>
+      <li>Using context in Go to manage request-scoped values and deadlines</li>
+      <li>Exploring the net/http package in depth, including advanced features like HTTP/2 server push</li>
+      <li>Building a simple RESTful API with Go and handling JSON data</li>
+      <li>Testing HTTP handlers and middleware using the net/http/httptest package</li>
+    </ul>
+  </p>
+  <p class="mb-4 text-lg">
+    By the end of the week, we had a solid understanding of how to build and extend a basic HTTP server in Go, and we were well-prepared to tackle more advanced topics in the coming weeks.
+  </p>
+  <p class="mb-4 text-lg">
+    HTTP requests are messages sent by the client to initiate an action on the server. They consist of a request line, headers, and an optional message body. The request line includes the HTTP method, the target URL, and the HTTP version. Common HTTP methods include GET, POST, PUT, DELETE, and PATCH.
+  </p>
+  <p class="mb-4 text-lg">
+    HTTP responses are messages sent by the server in response to an HTTP request. They consist of a status line, headers, and an optional message body. The status line includes the HTTP version, a status code, and a reason phrase. Common status codes include 200 (OK), 404 (Not Found), and 500 (Internal Server Error).
+  </p>
+  <p class="mb-4 text-lg">
+    HTTP headers are key-value pairs that provide additional information about the request or response. Common request headers include "Content-Type", "Authorization", and "User-Agent". Common response headers include "Content-Type", "Content-Length", and "Set-Cookie".
+  </p>
+  <p class="mb-4 text-lg">
+    By understanding the structure and components of HTTP requests and responses, we can build more robust and efficient web applications in Go.
+  </p>
+  <p class="mb-4 text-lg">
+    As a student taking this course, I found the content of Week 2 to be incredibly valuable. The hands-on experience of building a basic HTTP server in Go helped me solidify my understanding of HTTP requests and responses. The detailed exploration of routing, middleware, and the net/http package provided me with the knowledge and skills needed to build more complex web applications. The homework assignments and quizzes reinforced the concepts learned in class and allowed me to apply them in practical scenarios. Overall, Week 2 was a challenging yet rewarding experience that laid a strong foundation for the rest of the course.
+  </p>

@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/russross/blackfriday/v2"
 )
 
 type application struct {
@@ -16,8 +18,8 @@ type application struct {
 }
 
 type templateData struct {
-	Title    string
-	Greeting string
+	Title string
+	Body  template.HTML
 }
 
 func (app *application) viewTemplate(w http.ResponseWriter, r *http.Request) {
@@ -31,13 +33,23 @@ func (app *application) viewTemplate(w http.ResponseWriter, r *http.Request) {
 	} else {
 		// Trim the "/week/" prefix from the path
 		path = path[len("/week/"):]
+
+		dat, err_ := os.ReadFile("./data/week" + path + ".md")
+		body := blackfriday.Run(dat)
 		p := templateData{
-			Title:    "Go Study",
-			Greeting: "Hello World Study Mates",
+			Title: "Week " + path,
+			Body:  template.HTML(body),
 		}
 
+		if err_ != nil {
+			log.Print(err_)
+			p.Title = "404: Not Found"
+		}
+
+		log.Print(string(body))
+
 		// Parse the template file
-		t, _ := template.ParseFiles("./templates/" + "week" + path + ".mustache")
+		t, _ := template.ParseFiles("./templates/week.mustache")
 		t.Execute(w, p)
 	}
 }
@@ -53,7 +65,6 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 func main() {
 	mux := http.NewServeMux()
-
 	// Serve the static files
 	fileServer := http.FileServer(http.Dir("./static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
