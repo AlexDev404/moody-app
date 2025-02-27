@@ -46,7 +46,7 @@ func (app *application) viewTemplate(w http.ResponseWriter, r *http.Request) {
 			p.Title = "404: Not Found"
 		}
 
-		log.Print(string(body))
+		// log.Print(string(body))
 
 		// Parse the template file
 		t, _ := template.ParseFiles("./templates/week.mustache")
