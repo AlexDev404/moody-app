@@ -29,12 +29,12 @@ func (app *application) viewTemplate(w http.ResponseWriter, r *http.Request) {
 	// If the path is the root, serve the index template
 	// Otherwise, serve the template that corresponds to the path
 	if path == "/" {
-		http.ServeFile(w, r, "./templates/index.mustache")
+		http.ServeFile(w, r, "./src/templates/index.mustache")
 	} else {
 		// Trim the "/week/" prefix from the path
 		path = path[len("/week/"):]
 
-		dat, err_ := os.ReadFile("./data/week" + path + ".md")
+		dat, err_ := os.ReadFile("./src/data/week" + path + ".md")
 		body := blackfriday.Run(dat)
 		p := templateData{
 			Title: "Week " + path,
@@ -49,7 +49,7 @@ func (app *application) viewTemplate(w http.ResponseWriter, r *http.Request) {
 		// log.Print(string(body))
 
 		// Parse the template file
-		t, _ := template.ParseFiles("./templates/week.mustache")
+		t, _ := template.ParseFiles("./src/templates/week.mustache")
 		t.Execute(w, p)
 	}
 }
@@ -66,7 +66,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 func main() {
 	mux := http.NewServeMux()
 	// Serve the static files
-	fileServer := http.FileServer(http.Dir("./static"))
+	fileServer := http.FileServer(http.Dir("./src/static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	application := &application{logger: logger}

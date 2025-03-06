@@ -5,12 +5,12 @@
   "license": "ISC",
   "homepage": "https://github.com/alexdev404/baby-blog#readme",
   "description": "",
-  "main": "main.go",
+  "main": "src/main.go",
   "scripts": {
-    "watch": "tailwindcss -i ./static/app.css -o ./static/styles.css --watch",
-    "build": "tailwindcss -i ./static/app.css -o ./static/styles.css",
+    "watch": "tailwindcss -i ./static/app.css -o ./src/static/styles.css --watch",
+    "build": "tailwindcss -i ./static/app.css -o ./src/static/styles.css",
     "start": "npm run watch",
-    "gow": "$GOPATH/bin/gow run"
+    "gow": "$GOPATH/bin/gow run ./src"
   },
   "dependencies": {
     "tailwindcss": "^3.4.17"
