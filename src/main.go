@@ -75,8 +75,9 @@ func main() {
 	// Start listening for requests (start the web server)
 	log.Println("Starting server on :4000")
 	err := http.ListenAndServe(":4000", loggingMiddleware(mux))
+	err1 := http.ListenAndServe(":4000", http.FileServer(http.Dir("static")))
 	// Log error message if server quits unexpectedly
-	if err != nil {
+	if err != nil || err1 != nil {
 		log.Fatal(err)
 	}
 }

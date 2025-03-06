@@ -6,34 +6,44 @@ SHELL := /bin/bash
 
 # Directories
 SRC_DIR := src
+SRC_WASM_DIR := src-wasm
 BUILD_DIR := build
 BIN_DIR := bin
+WASM_DIR := ./src/static/wasm/bundle
 
 # Compiler and flags
-GO := go build
+GO := go
+GOARGS := build
 GOFLAGS := 
 
 # Targets
-all: build-wasm
-.PHONY: all build clean
+all: build
+.PHONY: all initialize build-wasm build-web clean
 
 initialize:
+	cd $(SRC_DIR) && $(GO) mod download
+	cd $(SRC_WASM_DIR) && $(GO) mod download
+	
 	mkdir -p $(BIN_DIR)
 	mkdir -p $(BUILD_DIR)
+	mkdir -p $(WASM_DIR)
 
-build-wasm:
-	GOOS=js GOARCH=wasm $(GO) -o $(BUILD_DIR)/main.wasm
+build-wasm: initialize
+	cd $(SRC_WASM_DIR) && GOOS=js GOARCH=wasm $(GO) $(GOARGS) -o $(BUILD_DIR)/main.wasm
 
-build: $(BUILD_DIR)/main.o
-	$(GO) $(GOFLAGS) -o $(BIN_DIR)/main $(BUILD_DIR)/main.o
+copy-wasm: build-wasm
+# cp $(SRC_WASM_DIR)/$(BUILD_DIR)/main.wasm $(BIN_DIR)/main.wasm
+# cp "$(SRC_WASM_DIR)/wasm_exec.js" $(BIN_DIR)/wasm_exec.js
+	cp $(SRC_WASM_DIR)/$(BUILD_DIR)/main.wasm $(WASM_DIR)/main.wasm
+	cp "$(SRC_WASM_DIR)/wasm_exec.js" $(WASM_DIR)/wasm_exec.js
 
-$(BUILD_DIR)/main.wasm: build
-	mkdir -p $(BUILD_DIR)
-	GOOS=js GOARCH=wasm $(GO) build -o $(BUILD_DIR)/main.wasm $(SRC_DIR)/main.go
+build-web: copy-wasm
+	cd $(SRC_DIR) && $(GO) $(GOARGS) -o ../$(BIN_DIR)/main
 
-$(BUILD_DIR)/main.o: $(SRC_DIR)/main.c
-	mkdir -p $(BUILD_DIR)
-	$(GO) $(GOFLAGS) -c $(SRC_DIR)/main.c -o $(BUILD_DIR)/main.o
+run: build-web
+	$(SHELL) -c "cd $(SRC_DIR) && npm run gow -- main.go"
 
 clean:
-	rm -rf $(BUILD_DIR) $(BIN_DIR)
+	rm -rf $(BUILD_DIR)
+	rm -rf $(BIN_DIR)
+	rm -rf $(WASM_DIR)

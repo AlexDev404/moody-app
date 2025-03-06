@@ -10,7 +10,7 @@
     "watch": "tailwindcss -i ./static/app.css -o ./src/static/styles.css --watch",
     "build": "tailwindcss -i ./static/app.css -o ./src/static/styles.css",
     "start": "npm run watch",
-    "gow": "$GOPATH/bin/gow run ./src"
+    "gow": "$GOPATH/bin/gow run"
   },
   "dependencies": {
     "tailwindcss": "^3.4.17"
