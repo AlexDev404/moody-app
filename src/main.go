@@ -25,9 +25,7 @@ type Application struct {
 func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *template.Template) {
 	// Get the URL path
 	path := r.URL.Path[1:]
-	log.Println("Path_RAW: ", path)
 	disallowed_routes := []string{"context", "head", "header", "footer", "current_ctx", "index"}
-	log.Println("Path: ", path)
 	// Remove any trailing slashes
 	if path == "" {
 		path = "index"
@@ -48,13 +46,9 @@ func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *
 	var tmpl *template.Template = t.Lookup(path)
 	if path != "/" {
 		if tmpl != nil {
-			// log.Println(tmpl.Tree.Root.String())
-			// tmpl.New(path[1:])
 			var buf bytes.Buffer
 			tmpl.Execute(&buf, nil)
 			templateContent = buf.String()
-			// templateContent = "Template found: " + path[1:]
-			// tmpl.Execute(w, nil)
 		} else {
 			http.ServeFile(w, r, "./static/errors/404.html")
 			return
@@ -71,7 +65,6 @@ func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *
 	// First: Let's check if there's a layout for the path
 	// Remove the leading text following the last / in the string
 	path = strings.TrimSuffix(path, "/"+path[strings.LastIndex(path, "/")+1:])
-	log.Println("LAYOUT_Path: ", path)
 	layout := t.Lookup("layout/" + path)
 
 	// Apply the layout
@@ -125,11 +118,7 @@ func getTemplates() (*template.Template, error) {
 	return templates, nil
 }
 
-// func init() {
-// 	Application.templates, _ := getTemplates()
-
-// }
-
+// Starts the web server and listens for requests
 func main() {
 	addr := flag.String("addr", "4000", "HTTP network address")
 	flag.Parse()
@@ -152,12 +141,15 @@ func main() {
 
 	log.Printf("Templates loaded: %v", templates.DefinedTemplates())
 	log.Printf("App templates: %v", app.templates.DefinedTemplates())
+
 	// Register the handler
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		app.ViewTemplate(w, r, app.templates)
 	})
+
 	// Start listening for requests (start the web server)
 	err := http.ListenAndServe((":" + *addr), app.Middleware.LoggingMiddleware(mux))
+
 	// Log error message if server quits unexpectedly
 	if err != nil {
 		panic(err.Error())

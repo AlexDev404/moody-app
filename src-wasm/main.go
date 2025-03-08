@@ -4,6 +4,10 @@
 //go:build wasm
 // +build wasm
 
+// Attr: https://www.sprkweb.dev/en/posts/go-wasm-with-typescript/
+// Attr: https://permify.co/post/wasm-go/
+// Attr: https://pkg.go.dev/syscall/js@go1.24.1
+
 package main
 
 import (

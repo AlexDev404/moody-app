@@ -9,7 +9,7 @@ SRC_DIR := src
 SRC_WASM_DIR := src-wasm
 BUILD_DIR := build
 BIN_DIR := bin
-WASM_DIR := ./src/static/wasm/bundle
+WASM_DIR := $(SRC_DIR)/static/wasm/bundle
 
 # Compiler and flags
 GO := go
@@ -47,3 +47,4 @@ clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf $(BIN_DIR)
 	rm -rf $(WASM_DIR)
+	rm -rf $(SRC_WASM_DIR)/$(BUILD_DIR)
