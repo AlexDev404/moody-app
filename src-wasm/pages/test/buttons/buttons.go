@@ -11,6 +11,7 @@ import "syscall/js"
 func Begin_Interactivity() {
 	// Button 1
 	element := js.Global().Get("document").Call("getElementById", "button1")
+
 	element.Set("innerText", "Updated content from Go!")
 	element.Set("onclick", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
 		js.Global().Call("alert", "Button clicked!")
@@ -22,7 +23,7 @@ func Begin_Interactivity() {
 	element.Set("innerText", "Updated content from Go!")
 	element.Set("onclick", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
 		js.Global().Get("console").Call("log", "Button clicked!")
-		element.Set("innerText", "Updated Console!")
+		this.Set("innerText", "Updated Console!")
 		return nil
 	}))
 
@@ -31,7 +32,7 @@ func Begin_Interactivity() {
 	element.Set("innerText", "Updated content from Go!")
 	element.Set("onclick", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
 		js.Global().Get("console").Call("warn", "Button clicked!")
-		element.Set("innerText", "Updated Console!")
+		this.Set("innerText", "Updated Console!")
 		return nil
 	}))
 
@@ -40,7 +41,7 @@ func Begin_Interactivity() {
 	element.Set("innerText", "Updated content from Go!")
 	element.Set("onclick", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
 		js.Global().Get("localStorage").Call("setItem", "button4", "Button clicked!")
-		element.Set("innerText", "Updated LocalStorage!")
+		this.Set("innerText", "Updated LocalStorage!")
 		return nil
 	}))
 
@@ -53,7 +54,7 @@ func Begin_Interactivity() {
 			js.Global().Get("console").Call("log", p[0])
 			return nil
 		}))
-		element.Set("innerText", "Updated Console!")
+		this.Set("innerText", "Updated Console!")
 		return nil
 	}))
 
