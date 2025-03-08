@@ -8,6 +8,8 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"baby-blog/types"
 	"html/template"
@@ -22,13 +24,23 @@ type Application struct {
 func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *template.Template) {
 	// Get the URL path
 	path := r.URL.Path
+	log.Println("Path: ", path[1:])
 
 	// TemplateData is a struct that holds the title, body, and data for the template
+	// First try to get the template by path if it's not root
+	var templateContent string
+	if path != "/" {
+		if tmpl := t.Lookup(path[1:]); tmpl != nil {
+			templateContent = "Template found: " + path[1:]
+		}
+	}
+
 	data := &types.TemplateData{
 		Title: "Baby Blog",
 		Body:  template.HTML("<h1>Welcome to Baby Blog</h1>"),
 		Data: map[string]interface{}{
 			"Path": path,
+			"HTML": template.HTML(templateContent),
 		},
 	}
 
@@ -63,7 +75,20 @@ func getTemplates() (*template.Template, error) {
 	}
 	// Add the routes to the templates
 	log.Println("Parsing 'route' templates...")
-	templates, err = templates.ParseGlob("templates/routes/*.mustache")
+	err = filepath.Walk("templates/routes", func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() && strings.HasSuffix(path, ".mustache") {
+			var tmpl *template.Template
+			tmpl, err = templates.ParseFiles(path)
+			if err != nil {
+				return err
+			}
+			templates = tmpl
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
