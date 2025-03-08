@@ -77,10 +77,6 @@ func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-	// } else {
-
-	// http.ServeFile(w, r, "./templates/404.mustache")
-	// }
 }
 
 func getTemplates() (*template.Template, error) {
