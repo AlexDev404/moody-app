@@ -1,4 +1,4 @@
-module github.com/cohune-cabbage/baby-blog
+module baby-blog
 
 go 1.23.4
 

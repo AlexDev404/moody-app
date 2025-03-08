@@ -3,80 +3,109 @@
 package main
 
 import (
-	"html/template"
+	"flag"
 	"log"
 	"log/slog"
 	"net/http"
 	"os"
-	"time"
 
-	"github.com/russross/blackfriday/v2"
+	"baby-blog/types"
+	"html/template"
 )
 
-type application struct {
-	logger *slog.Logger
+// Application is a wrapper for types.Application
+type Application struct {
+	*types.Application
+	templates *template.Template
 }
 
-type templateData struct {
-	Title string
-	Body  template.HTML
-}
-
-func (app *application) viewTemplate(w http.ResponseWriter, r *http.Request) {
+func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *template.Template) {
 	// Get the URL path
 	path := r.URL.Path
 
+	// TemplateData is a struct that holds the title, body, and data for the template
+	data := &types.TemplateData{
+		Title: "Baby Blog",
+		Body:  template.HTML("<h1>Welcome to Baby Blog</h1>"),
+		Data: map[string]interface{}{
+			"Path": path,
+		},
+	}
+
 	// If the path is the root, serve the index template
 	// Otherwise, serve the template that corresponds to the path
-	if path == "/" {
-		http.ServeFile(w, r, "./templates/index.mustache")
-	} else {
-		// Trim the "/week/" prefix from the path
-		path = path[len("/week/"):]
-
-		dat, err_ := os.ReadFile("./data/week" + path + ".md")
-		body := blackfriday.Run(dat)
-		p := templateData{
-			Title: "Week " + path,
-			Body:  template.HTML(body),
-		}
-
-		if err_ != nil {
-			log.Print(err_)
-			p.Title = "404: Not Found"
-		}
-
-		// log.Print(string(body))
-
-		// Parse the template file
-		t, _ := template.ParseFiles("./templates/week.mustache")
-		t.Execute(w, p)
+	// if path == "/" {
+	// template, err := template.ParseFiles("./templates/index.mustache")
+	err := t.ExecuteTemplate(w, "app", data)
+	if err != nil {
+		app.Logger.Error("Error rendering template", "error", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
 	}
+	// } else {
+
+	// http.ServeFile(w, r, "./templates/404.mustache")
+	// }
 }
 
-// A basic middleware
-func loggingMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-		log.Print("Method: ", r.Method, " URL: ", r.URL.Path, " Time: ", time.Since(start))
-		next.ServeHTTP(w, r)
-	})
+func getTemplates() (*template.Template, error) {
+	// Parse the initial templates
+	log.Println("Parsing 'initial' templates...")
+	templates, err := template.ParseGlob("templates/*.mustache")
+	if err != nil {
+		return nil, err
+	}
+	// Add the partials to the templates
+	log.Println("Parsing 'partial' templates...")
+	templates, err = templates.ParseGlob("templates/partials/*.mustache")
+	if err != nil {
+		return nil, err
+	}
+	// Add the routes to the templates
+	log.Println("Parsing 'route' templates...")
+	templates, err = templates.ParseGlob("templates/routes/*.mustache")
+	if err != nil {
+		return nil, err
+	}
+	return templates, nil
 }
+
+// func init() {
+// 	Application.templates, _ := getTemplates()
+
+// }
 
 func main() {
+	addr := flag.String("addr", "4000", "HTTP network address")
+	flag.Parse()
 	mux := http.NewServeMux()
 	// Serve the static files
 	fileServer := http.FileServer(http.Dir("static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	application := &application{logger: logger}
+	templates, t_err := getTemplates()
+	if t_err != nil {
+		log.Fatalf("Error parsing templates: %v", t_err)
+	}
+	typesApp := &types.Application{
+		Logger: logger,
+	}
+	app := &Application{
+		Application: typesApp,
+		templates:   templates,
+	}
+
+	log.Printf("Templates loaded: %v", templates.DefinedTemplates())
+	log.Printf("App templates: %v", app.templates.DefinedTemplates())
 	// Register the handler
-	mux.HandleFunc("/", application.viewTemplate)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		app.ViewTemplate(w, r, app.templates)
+	})
 	// Start listening for requests (start the web server)
-	log.Println("Starting server on :4000")
-	err := http.ListenAndServe(":4000", loggingMiddleware(mux))
+	err := http.ListenAndServe((":" + *addr), app.Middleware.LoggingMiddleware(mux))
 	// Log error message if server quits unexpectedly
 	if err != nil {
-		log.Fatal(err)
+		panic(err.Error())
 	}
+	app.Logger.Info("Now listening on port " + *addr)
 }
