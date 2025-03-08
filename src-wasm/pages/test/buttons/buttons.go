@@ -10,11 +10,47 @@ package buttons
 import "syscall/js"
 
 func Begin_Interactivity() {
-	document := js.Global().Get("document")
-	element := document.Call("getElementById", "button1")
+	// Button 1
+	element := js.Global().Get("document").Call("getElementById", "button1")
 	element.Set("innerText", "Updated content from Go!")
 	element.Set("onclick", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
 		js.Global().Call("alert", "Button clicked!")
+		return nil
+	}))
+	
+	// Button 2
+	element = js.Global().Get("document").Call("getElementById", "button2")
+	element.Set("innerText", "Updated content from Go!")
+	element.Set("onclick", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
+		js.Global().Get("console").Call("log", "Button clicked!")
+		return nil
+	}))
+
+	// Button 3
+	element = js.Global().Get("document").Call("getElementById", "button3")
+	element.Set("innerText", "Updated content from Go!")
+	element.Set("onclick", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
+		js.Global().Get("console").Call("warn", "Button clicked!")
+		return nil
+	}))
+
+	// Button 4
+	element = js.Global().Get("document").Call("getElementById", "button4")
+	element.Set("innerText", "Updated content from Go!")
+	element.Set("onclick", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
+		js.Global().Get("localStorage").Call("setItem", "button4", "Button clicked!")
+		return nil
+	}))
+
+	// Button 5
+	element = js.Global().Get("document").Call("getElementById", "button5")
+	element.Set("innerText", "Updated content from Go!")
+	element.Set("onclick", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
+		js.Global().Call("fetch", "https://jsonplaceholder.typicode.com/posts/1").
+		Call("then", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
+			js.Global().Get("console").Call("log", p[0])
+			return nil
+		}))
 		return nil
 	}))
 
