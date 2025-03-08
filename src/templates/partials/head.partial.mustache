@@ -1,12 +1,13 @@
 {{define "head"}}
 <head>
-    <title>MySite</title>
+    <title>Immanuel Garcia | Go Blog</title>
     <link rel="stylesheet" href="/static/style.css" />
     <script src="/static/wasm/bundle/wasm_exec.js"></script>
     <script>
         const go = new Go();
         WebAssembly.instantiateStreaming(fetch("/static/wasm/bundle/main.wasm"), go.importObject).then((result) => {
             go.run(result.instance);
+            go_setpath("{{ .Data.Path}}");
         });
     </script>
 </head>
