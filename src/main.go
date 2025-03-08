@@ -25,6 +25,7 @@ type Application struct {
 func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *template.Template) {
 	// Get the URL path
 	path := r.URL.Path[1:]
+	log.Println("Path_RAW: ", path)
 	disallowed_routes := []string{"context", "head", "header", "footer", "current_ctx", "index"}
 	log.Println("Path: ", path)
 	// Remove any trailing slashes
@@ -67,11 +68,18 @@ func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *
 		},
 	}
 
-	// If the path is the root, serve the index template
-	// Otherwise, serve the template that corresponds to the path
-	// if path == "/" {
-	// template, err := template.ParseFiles("./templates/index.mustache")
-	err := t.ExecuteTemplate(w, "app", data)
+	// Section: Render Layouts
+	// First: Let's check if there's a layout for the path
+	// Remove the leading text following the last / in the string
+	path = strings.TrimSuffix(path, "/"+path[strings.LastIndex(path, "/")+1:])
+	log.Println("LAYOUT_Path: ", path)
+	layout := t.Lookup("layout/" + path)
+	var err error
+	if layout == nil {
+		err = t.ExecuteTemplate(w, "layout/app", data)
+	} else {
+		layout.Execute(w, data)
+	}
 	if err != nil {
 		app.Logger.Error("Error rendering template", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
