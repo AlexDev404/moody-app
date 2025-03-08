@@ -2,7 +2,6 @@ package types
 
 import (
 	"baby-blog/middleware"
-	"html/template"
 	"log/slog"
 )
 
@@ -12,7 +11,5 @@ type Application struct {
 }
 
 type TemplateData struct {
-	Title string
-	Body  template.HTML
-	Data  interface{}
+	Data interface{}
 }

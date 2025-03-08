@@ -61,8 +61,6 @@ func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *
 	}
 
 	data := &types.TemplateData{
-		Title: "Baby Blog",
-		Body:  template.HTML("<h1>Welcome to Baby Blog</h1>"),
 		Data: map[string]interface{}{
 			"Path": path,
 			"HTML": template.HTML(templateContent),

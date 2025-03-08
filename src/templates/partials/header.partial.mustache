@@ -1,9 +1,17 @@
 {{define "header"}}
-<header>
-    <h1>MySite</h1>
-    <br />
-    <nav>
-        <a href="/">Home</a>
-    </nav>
+<header class="bg-gray-900 text-white p-4 shadow-md">
+    <div class="container mx-auto flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+            <a href="/" class="text-white font-bold text-2xl hover:text-gray-300">AlexDev404</a>
+            <span class="text-gray-400 text-sm">by Immanuel Garcia</span>
+        </div>
+        <nav>
+            <ul class="flex space-x-6">
+                <li><a href="/" class="hover:text-gray-300">Home</a></li>
+                <li><a href="/about" class="hover:text-gray-300">About</a></li>
+                <li><a href="/contact" class="hover:text-gray-300">Contact</a></li>
+            </ul>
+        </nav>
+    </div>
 </header>
 {{end}}
