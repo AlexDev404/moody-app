@@ -7,7 +7,7 @@
         const go = new Go();
         WebAssembly.instantiateStreaming(fetch("/static/wasm/bundle/main.wasm"), go.importObject).then((result) => {
             go.run(result.instance);
-            go_setpath("{{ .Data.Path}}");
+            go_setpath("{{ .Data.Path }}");  // Should be replaced with the actual path after execution
         });
     </script>
 </head>
