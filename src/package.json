@@ -7,8 +7,8 @@
   "description": "",
   "main": "src/main.go",
   "scripts": {
-    "watch": "tailwindcss -i ./static/app.css -o ./src/static/styles.css --watch",
-    "build": "tailwindcss -i ./static/app.css -o ./src/static/styles.css",
+    "watch": "tailwindcss -i ./static/app.css -o ./static/style.css --watch",
+    "build": "tailwindcss -i ./static/app.css -o ./static/style.css",
     "start": "npm run watch",
     "gow": "$GOPATH/bin/gow run"
   },

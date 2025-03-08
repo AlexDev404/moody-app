@@ -25,12 +25,20 @@ type Application struct {
 func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *template.Template) {
 	// Get the URL path
 	path := r.URL.Path[1:]
+	disallowed_routes := []string{"context", "head", "header", "footer", "current_ctx", "index"}
 	log.Println("Path: ", path)
 	// Remove any trailing slashes
-	if path != "" {
-		path = strings.TrimSuffix(path, "/")
-	} else {
+	if path == "" {
 		path = "index"
+	} else {
+		path = strings.TrimSuffix(path, "/")
+		// Check if path is in disallowed_routes
+		for _, route := range disallowed_routes {
+			if path == route {
+				http.Error(w, "Forbidden", http.StatusForbidden)
+				return
+			}
+		}
 	}
 
 	// TemplateData is a struct that holds the title, body, and data for the template
@@ -46,6 +54,9 @@ func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *
 			templateContent = buf.String()
 			// templateContent = "Template found: " + path[1:]
 			// tmpl.Execute(w, nil)
+		} else {
+			http.ServeFile(w, r, "./static/errors/404.html")
+			return
 		}
 	}
 
