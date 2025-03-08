@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"syscall/js"
+
+	"baby-blog/wasm/pages/test/buttons"
 )
 
 type WasmApplication struct {
@@ -11,14 +13,20 @@ type WasmApplication struct {
 
 func (application *WasmApplication) go_setpath(this js.Value, p []js.Value) interface{} {
 	application.Path = p[0].String()
+	fmt.Println("[WASM]: Path set to", application.Path)
 	application.updateDOMContent()
 	return nil
 }
 
 func (application *WasmApplication) updateDOMContent() {
-	document := js.Global().Get("document")
-	element := document.Call("getElementById", "button1")
-	element.Set("innerText", "Updated content from Go!")
+	switch application.Path {
+	case "test/buttons":
+		buttons.Begin_Interactivity()
+		break
+	default:
+		fmt.Println("[WASM]: Path is not implemented")
+		return
+	}
 }
 
 func (application *WasmApplication) init() {
