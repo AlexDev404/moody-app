@@ -1,8 +1,13 @@
 {{define "layout/app"}}
+<!DOCTYPE html>
+<html lang="en">
   {{template "head" .}}
   {{template "header" .}}
-  <main>
-    {{template "context" .}}
-  </main>
+  <body>
+    <main>
+     {{template "context" .}}
+    </main>
   {{template "footer" .}}
+  </body>
+  </html>
 {{end}}

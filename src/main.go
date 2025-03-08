@@ -67,17 +67,20 @@ func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *
 			"HTML": template.HTML(templateContent),
 		},
 	}
-
 	// Section: Render Layouts
 	// First: Let's check if there's a layout for the path
 	// Remove the leading text following the last / in the string
 	path = strings.TrimSuffix(path, "/"+path[strings.LastIndex(path, "/")+1:])
 	log.Println("LAYOUT_Path: ", path)
 	layout := t.Lookup("layout/" + path)
+
+	// Apply the layout
 	var err error
 	if layout == nil {
+		// Render the template directly
 		err = t.ExecuteTemplate(w, "layout/app", data)
 	} else {
+		// Render the template with the layout
 		layout.Execute(w, data)
 	}
 	if err != nil {
