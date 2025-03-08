@@ -3,6 +3,7 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"log"
 	"log/slog"
@@ -23,15 +24,28 @@ type Application struct {
 
 func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *template.Template) {
 	// Get the URL path
-	path := r.URL.Path
-	log.Println("Path: ", path[1:])
+	path := r.URL.Path[1:]
+	log.Println("Path: ", path)
+	// Remove any trailing slashes
+	if path != "/" {
+		path = strings.TrimSuffix(path, "/")
+	} else {
+		path = "app"
+	}
 
 	// TemplateData is a struct that holds the title, body, and data for the template
 	// First try to get the template by path if it's not root
 	var templateContent string
+	var tmpl *template.Template = t.Lookup(path)
 	if path != "/" {
-		if tmpl := t.Lookup(path[1:]); tmpl != nil {
-			templateContent = "Template found: " + path[1:]
+		if tmpl != nil {
+			// log.Println(tmpl.Tree.Root.String())
+			// tmpl.New(path[1:])
+			var buf bytes.Buffer
+			tmpl.Execute(&buf, nil)
+			templateContent = buf.String()
+			// templateContent = "Template found: " + path[1:]
+			// tmpl.Execute(w, nil)
 		}
 	}
 
