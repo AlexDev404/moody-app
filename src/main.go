@@ -27,10 +27,10 @@ func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *
 	path := r.URL.Path[1:]
 	log.Println("Path: ", path)
 	// Remove any trailing slashes
-	if path != "/" {
+	if path != "" {
 		path = strings.TrimSuffix(path, "/")
 	} else {
-		path = "app"
+		path = "index"
 	}
 
 	// TemplateData is a struct that holds the title, body, and data for the template
