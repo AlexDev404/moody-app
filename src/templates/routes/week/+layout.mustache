@@ -1,14 +1,12 @@
 {{define "layout/week"}}
 <!DOCTYPE html>
 <html lang="en">
-  <!--- {{template "head" .}} --->
-  <!--- {{template "header" .}} --->
-  <body>
-  <main>
-    {{template "context" .}}
-    <!-- NOTHING -->
-  </main>
-  {{template "footer" .}}
+  {{ template "head" . }}
+  <body class="font-sans max-w-3xl mx-auto p-4 leading-relaxed">
+  {{ template "header" . }}
+    <main>
+      {{ template "context" . }}
+    </main>
   </body>
-  </html>
+</html>
 {{end}}

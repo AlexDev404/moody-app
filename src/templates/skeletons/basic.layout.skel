@@ -1,0 +1,10 @@
+{{define "layout/LAYOUT_NAME"}}
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <main>
+      {{ template "context" . }}
+    </main>
+  </body>
+</html>
+{{end}}
