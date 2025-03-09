@@ -21,7 +21,7 @@ type WasmApplication struct {
 	Path string
 }
 
-func (application *WasmApplication) go_setpath(this js.Value, p []js.Value) interface{} {
+func (application *WasmApplication) GoSetPath(this js.Value, p []js.Value) interface{} {
 	application.Path = p[0].String()
 	fmt.Println("[WASM]: Path set to", application.Path)
 	application.updateDOMContent()
@@ -31,7 +31,7 @@ func (application *WasmApplication) go_setpath(this js.Value, p []js.Value) inte
 func (application *WasmApplication) updateDOMContent() {
 	switch application.Path {
 	case "test/buttons":
-		buttons.Begin_Interactivity()
+		buttons.BeginInteractivity()
 		break
 	default:
 		fmt.Println("[WASM]: Path is not implemented")
@@ -40,7 +40,7 @@ func (application *WasmApplication) updateDOMContent() {
 }
 
 func (application *WasmApplication) init() {
-	js.Global().Set("go_setpath", js.FuncOf(application.go_setpath))
+	js.Global().Set("go_setpath", js.FuncOf(application.GoSetPath))
 }
 func main() {
 	application := &WasmApplication{}

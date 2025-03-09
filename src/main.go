@@ -25,14 +25,14 @@ type Application struct {
 func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *template.Template) {
 	// Get the URL path
 	path := r.URL.Path[1:]
-	disallowed_routes := []string{"context", "head", "header", "footer", "current_ctx", "index"}
+	disallowedRoutes := []string{"context", "head", "header", "footer", "current_ctx", "index"}
 	// Remove any trailing slashes
 	if path == "" {
 		path = "index"
 	} else {
 		path = strings.TrimSuffix(path, "/")
-		// Check if path is in disallowed_routes
-		for _, route := range disallowed_routes {
+		// Check if path is in disallowedRoutes
+		for _, route := range disallowedRoutes {
 			if path == route {
 				http.Error(w, "Forbidden", http.StatusForbidden)
 				return

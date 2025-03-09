@@ -8,7 +8,7 @@ package buttons
 
 import "syscall/js"
 
-func Begin_Interactivity() {
+func BeginInteractivity() {
 	// Button 1
 	element := js.Global().Get("document").Call("getElementById", "button1")
 
