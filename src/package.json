@@ -9,10 +9,15 @@
   "scripts": {
     "watch": "tailwindcss -i ./static/app.css -o ./static/style.css --watch",
     "build": "tailwindcss -i ./static/app.css -o ./static/style.css",
+    "manage": "drizzle-kit studio --port=3000",
+    "setup-manage": "sudo -u postgres psql -c \"ALTER USER postgres WITH PASSWORD 'postgres';\" -c \"CREATE DATABASE baby_blog;\"",
     "start": "npm run watch",
     "gow": "$GOPATH/bin/gow run"
   },
   "dependencies": {
+    "drizzle-kit": "^0.30.5",
+    "drizzle-orm": "^0.40.0",
+    "pg": "^8.14.0",
     "tailwindcss": "^3.4.17"
   },
   "repository": {

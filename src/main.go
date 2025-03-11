@@ -14,15 +14,17 @@ import (
 
 	"baby-blog/types"
 	"html/template"
+	"sync"
 )
 
 // Application is a wrapper for types.Application
 type Application struct {
 	*types.Application
-	templates *template.Template
+	templates  *template.Template
+	bufferPool sync.Pool
 }
 
-func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *template.Template) {
+func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *template.Template) {
 	// Get the URL path
 	path := r.URL.Path[1:]
 	disallowedRoutes := []string{"context", "head", "header", "footer", "current_ctx", "index"}
@@ -50,6 +52,7 @@ func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *
 			tmpl.Execute(&buf, nil)
 			templateContent = buf.String()
 		} else {
+			w.WriteHeader(http.StatusNotFound)
 			http.ServeFile(w, r, "./static/errors/404.html")
 			return
 		}
@@ -67,20 +70,32 @@ func (app *Application) ViewTemplate(w http.ResponseWriter, r *http.Request, t *
 	path = strings.TrimSuffix(path, "/"+path[strings.LastIndex(path, "/")+1:])
 	layout := t.Lookup("layout/" + path)
 
+	// Page buffer
+	pageBuf := app.bufferPool.Get().(*bytes.Buffer)
+	pageBuf.Reset()
+	defer app.bufferPool.Put(pageBuf)
+
 	// Apply the layout
 	var err error
 	if layout == nil {
 		// Render the template directly
-		err = t.ExecuteTemplate(w, "layout/app", data)
+		err = t.ExecuteTemplate(pageBuf, "layout/app", data)
 	} else {
 		// Render the template with the layout
-		layout.Execute(w, data)
+		err = layout.Execute(pageBuf, data)
 	}
 	if err != nil {
-		app.Logger.Error("Error rendering template", "error", err)
+		app.Logger.Error("Error rendering page", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
+	_, err = pageBuf.WriteTo(w)
+	if err != nil {
+		app.Logger.Error("Failed to write template to response: ", "error", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		http.ServeFile(w, r, "./static/errors/500.html")
+	}
+
 }
 
 func getTemplates() (*template.Template, error) {
@@ -134,9 +149,18 @@ func main() {
 	typesApp := &types.Application{
 		Logger: logger,
 	}
+
+	// Initialize the application
 	app := &Application{
 		Application: typesApp,
 		templates:   templates,
+	}
+
+	// Initialize the buffer pool
+	app.bufferPool = sync.Pool{
+		New: func() any {
+			return &bytes.Buffer{}
+		},
 	}
 
 	log.Printf("Templates loaded: %v", templates.DefinedTemplates())
@@ -144,8 +168,10 @@ func main() {
 
 	// Register the handler
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		app.ViewTemplate(w, r, app.templates)
+		app.Render(w, r, app.templates)
 	})
+
+	app.Logger.Info("Now listening on port " + *addr)
 
 	// Start listening for requests (start the web server)
 	err := http.ListenAndServe((":" + *addr), app.Middleware.LoggingMiddleware(mux))
@@ -154,5 +180,4 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	app.Logger.Info("Now listening on port " + *addr)
 }
