@@ -19,7 +19,7 @@ GOFLAGS :=
 
 # Targets
 all: run
-.PHONY: all initialize build-wasm build-web clean
+.PHONY: all initialize build-wasm build-web clean create_migrations
 
 # ------------------ BEGIN PLATFORM AND ARCHITECTURE DETECTION --------------------
 BUILD_PLATFORM=
@@ -133,3 +133,6 @@ ifeq ($(BUILD_PLATFORM),WIN32)
 	rd /s /q $(SRC_WASM_DIR)\$(BUILD_DIR)
 endif
 endif
+
+create_migrations:
+	migrate create -seq -ext=.sql -dir=./migrations create_feedback_table

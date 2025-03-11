@@ -171,7 +171,7 @@ func main() {
 		app.Render(w, r, app.templates)
 	})
 
-	app.Logger.Info("Now listening on port " + *addr)
+	app.Logger.Info("Now listening on port http://127.0.0.1:" + *addr)
 
 	// Start listening for requests (start the web server)
 	err := http.ListenAndServe((":" + *addr), app.Middleware.LoggingMiddleware(mux))
