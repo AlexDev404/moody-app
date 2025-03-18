@@ -150,12 +150,15 @@ func (app *Application) startup() {
 	mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	templates, t_err := getTemplates()
+	templates, tErr := getTemplates()
+	if tErr != nil {
+		log.Fatal("Error parsing templates: ", tErr)
+	}
 
 	// the call to openDB() sets up our connection pool
-	db, err := database.OpenDB(*dsn)
-	if err != nil {
-		logger.Error(err.Error())
+	db, dbErr := database.OpenDB(*dsn)
+	if dbErr != nil {
+		log.Fatal(dbErr.Error())
 		os.Exit(1)
 	}
 	// release the database resources before exiting
@@ -163,9 +166,6 @@ func (app *Application) startup() {
 
 	logger.Info("database connection pool established")
 
-	if t_err != nil {
-		log.Fatalf("Error parsing templates: %v", t_err)
-	}
 	typesApp := &types.Application{
 		Logger: logger,
 	}

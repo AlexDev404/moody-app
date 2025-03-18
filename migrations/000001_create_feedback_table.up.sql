@@ -5,6 +5,5 @@ CREATE TABLE IF NOT EXISTS feedback (
     fullname text NOT NULL,
     subject text NOT NULL,
     message text NOT NULL,
-    email citext NOT NULL,
-    gender text NOT NULL
+    email citext NOT NULL
 );

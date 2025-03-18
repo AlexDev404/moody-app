@@ -1,4 +1,5 @@
 # Makefile
+include .envrc
 
 # Variables
 SHELL := /bin/bash
@@ -112,10 +113,10 @@ build-web: copy-wasm
 
 run: build-web
 ifeq ($(BUILD_PLATFORM),LINUX)
-	cd $(SRC_DIR) && npm run gow -- main.go form_processor.go
+	cd $(SRC_DIR) && npm run gow -- .
 else
 ifeq ($(BUILD_PLATFORM),WIN32)
-	cd $(SRC_DIR) && go run main.go
+	cd $(SRC_DIR) && go run .
 endif
 endif
 
