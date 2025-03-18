@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"baby-blog/database"
 	"baby-blog/types"
 	"html/template"
 	"sync"
@@ -134,15 +135,34 @@ func getTemplates() (*template.Template, error) {
 }
 
 // Starts the web server and listens for requests
-func main() {
+func (app *Application) startup() {
+	// Parse the address
 	addr := flag.String("addr", "4000", "HTTP network address")
+	// Connect to the database
+	dsn := flag.String("dsn", "postgresql://postgres:postgres@localhost:5432/baby_blog?sslmode=disable", "PostgreSQL DSN")
 	flag.Parse()
-	mux := http.NewServeMux()
+
 	// Serve the static files
 	fileServer := http.FileServer(http.Dir("static"))
+
+	// Create a new ServeMux and register the handler functions
+	mux := http.NewServeMux()
 	mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
+
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	templates, t_err := getTemplates()
+
+	// the call to openDB() sets up our connection pool
+	db, err := database.OpenDB(*dsn)
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
+	// release the database resources before exiting
+	defer db.Close()
+
+	logger.Info("database connection pool established")
+
 	if t_err != nil {
 		log.Fatalf("Error parsing templates: %v", t_err)
 	}
@@ -151,7 +171,7 @@ func main() {
 	}
 
 	// Initialize the application
-	app := &Application{
+	app = &Application{
 		Application: typesApp,
 		templates:   templates,
 	}
@@ -173,7 +193,7 @@ func main() {
 		case http.MethodGet:
 			app.Render(w, r, app.templates)
 		case http.MethodPost:
-			app.POSTProcessor(w, r)
+			app.POSTHandler(w, r)
 		default:
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		}
@@ -189,4 +209,9 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
+}
+
+func main() {
+	app := &Application{}
+	app.startup()
 }

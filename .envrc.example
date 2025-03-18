@@ -1,0 +1,8 @@
+export FEEDBACK_DB_DSN="postgresql://postgres:postgres@localhost:5432/baby_blog?sslmode=disable"
+export FEEDBACK_DB_DRIVER="postgres"
+export FEEDBACK_DB_NAME="baby_blog"
+export FEEDBACK_DB_USER="postgres"
+export FEEDBACK_DB_PASSWORD="postgres"
+export FEEDBACK_DB_HOST="localhost"
+export FEEDBACK_DB_PORT="5432"
+export FEEDBACK_DB_SSLMODE="disable"

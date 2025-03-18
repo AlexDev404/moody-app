@@ -166,3 +166,4 @@ build
 bin
 src-wasm/build
 src/static/wasm/bundle
+.envrc
