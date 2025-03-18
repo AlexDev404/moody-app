@@ -158,7 +158,10 @@ func (app *Application) startup() {
 	// the call to openDB() sets up our connection pool
 	db, dbErr := database.OpenDB(*dsn)
 	if dbErr != nil {
-		log.Fatal(dbErr.Error())
+		log.Print(dbErr.Error())
+		log.Fatal(`This error usually results when the application could not connect to the database.
+Ensure that PostgreSQL is installed and running on port 5432--otherwise pass a different URL to it using the
+flag --dsn=URL`)
 		os.Exit(1)
 	}
 	// release the database resources before exiting
