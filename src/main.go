@@ -168,7 +168,16 @@ func main() {
 
 	// Register the handler
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		app.Render(w, r, app.templates)
+		// Only respond to get requests
+		switch r.Method {
+		case http.MethodGet:
+			app.Render(w, r, app.templates)
+		case http.MethodPost:
+			app.POSTProcessor(w, r)
+		default:
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		}
+
 	})
 
 	app.Logger.Info("Now listening on port http://127.0.0.1:" + *addr)
