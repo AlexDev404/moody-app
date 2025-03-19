@@ -1,6 +1,7 @@
 package main
 
 import (
+	"baby-blog/database/models"
 	"baby-blog/forms"
 	"net/http"
 )
@@ -17,8 +18,28 @@ func (app *Application) POSTHandler(w http.ResponseWriter, r *http.Request) {
 	// Place all form submission routes here
 	switch r.URL.Path {
 	case "/feedback":
-		formErrors := forms.FeedbackForm(w, r)
-		app.Render(w, r, app.templates, formErrors)
+		formData, formErrors := forms.FeedbackForm(w, r)
+
+		// Merge form errors with form data (essentially, append)
+		for key, value := range formErrors {
+			formData[key] = value
+		}
+
+		app.Render(w, r, app.templates, formData)
+		// Handle database insertion (this part needs proper implementation)
+		if formData != nil {
+			feedbackData := &models.Feedback{
+				Fullname: formData["fullname"].(string),
+				Email:    formData["email"].(string),
+				Subject:  formData["subject"].(string),
+				Message:  formData["message"].(string),
+			}
+			err := app.models.Feedback.Insert(feedbackData)
+			if err != nil {
+				app.Logger.Error("Failed to insert feedback", "error", err)
+
+			}
+		}
 	default:
 		app.Logger.Warn("Unknown POST route accessed", "path", r.URL.Path)
 		http.Error(w, "Not Found", http.StatusNotFound)

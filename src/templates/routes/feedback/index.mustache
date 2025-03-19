@@ -9,8 +9,9 @@
         <div>
             <label for="fullname" class="block text-sm font-medium text-gray-700">Full Name</label>
             <p class="text-red-500 text-sm">{{ .Data.PageData.Errors.fullname }}</p>
-            <input type="text" id="fullname" name="fullname" required 
+            <input type="text" id="fullname" name="fullname" required_ 
                          placeholder="Enter your name"
+                         value="{{ .Data.PageData.fullname }}"
                          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                          minlength="2" maxlength="100">
         </div>
@@ -18,8 +19,9 @@
         <div>
             <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
             <p class="text-red-500 text-sm">{{ .Data.PageData.Errors.email }}</p>
-            <input type="email" id="email" name="email" required
+            <input type="email" id="email" name="email" required_
                          placeholder="Enter an email address"
+                         value="{{ .Data.PageData.email }}"
                          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
         </div>
@@ -27,8 +29,9 @@
         <div>
             <label for="subject" class="block text-sm font-medium text-gray-700">Subject</label>
             <p class="text-red-500 text-sm">{{ .Data.PageData.Errors.subject }}</p>
-            <input type="text" id="subject" name="subject" required
+            <input type="text" id="subject" name="subject" required_
                          placeholder="Enter a subject line"
+                         value="{{ .Data.PageData.subject }}"
                          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                          minlength="5" maxlength="200">
         </div>
@@ -36,8 +39,9 @@
         <div>
             <label for="message" class="block text-sm font-medium text-gray-700">Message</label>
             <p class="text-red-500 text-sm">{{ .Data.PageData.Errors.message }}</p>
-            <textarea id="message" name="message" rows="5" required
+            <textarea id="message" name="message" rows="5" required_
                                 placeholder="Enter a message"
+                                value="{{ .Data.PageData.message }}"
                                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                 minlength="10" maxlength="1000"></textarea>
         </div>
