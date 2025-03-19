@@ -34,7 +34,7 @@ func (application *WasmApplication) updateDOMContent() {
 		buttons.BeginInteractivity()
 		break
 	default:
-		fmt.Println("[WASM]: Path is not implemented")
+		fmt.Println("[WASM]: No implementation for this path")
 		return
 	}
 }
