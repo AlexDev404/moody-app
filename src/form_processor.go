@@ -3,6 +3,7 @@ package main
 import (
 	"baby-blog/database/models"
 	"baby-blog/forms"
+	"baby-blog/forms/validator"
 	"net/http"
 )
 
@@ -15,10 +16,11 @@ func (app *Application) POSTHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	validator := validator.NewValidator()
 	// Place all form submission routes here
 	switch r.URL.Path {
 	case "/feedback":
-		formData, formErrors := forms.FeedbackForm(w, r)
+		formData, formErrors := forms.FeedbackForm(w, r, validator)
 
 		// Merge form errors with form data (essentially, append)
 		for key, value := range formErrors {

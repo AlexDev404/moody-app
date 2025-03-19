@@ -1,6 +1,7 @@
 package forms
 
 import (
+	"baby-blog/forms/validator"
 	"log/slog"
 	"net/http"
 	"os"
@@ -9,7 +10,7 @@ import (
 // Create a new logger instance
 var logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
 
-func FeedbackForm(w http.ResponseWriter, r *http.Request) (map[string]interface{}, map[string]interface{}) {
+func FeedbackForm(w http.ResponseWriter, r *http.Request, v *validator.Validator) (map[string]interface{}, map[string]interface{}) {
 	var formErrors map[string]interface{}
 	formData := map[string]interface{}{
 		"fullname": r.FormValue("fullname"),
@@ -19,19 +20,11 @@ func FeedbackForm(w http.ResponseWriter, r *http.Request) (map[string]interface{
 	}
 
 	// Validate form data
-	errors := make(map[string]string)
-	if formData["fullname"] == "" {
-		errors["fullname"] = "Full name is required"
-	}
-	if formData["email"] == "" {
-		errors["email"] = "Email is required"
-	}
-	if formData["subject"] == "" {
-		errors["subject"] = "Subject is required"
-	}
-	if formData["message"] == "" {
-		errors["message"] = "Message is required"
-	}
+	errors := v.Errors
+	v.Check(validator.NotBlank(formData["fullname"].(string)), "fullname", "Full name is required")
+	v.Check(validator.NotBlank(formData["email"].(string)), "email", "Email is required")
+	v.Check(validator.NotBlank(formData["subject"].(string)), "subject", "Subject is required")
+	v.Check(validator.NotBlank(formData["message"].(string)), "message", "Message is required")
 
 	// Check if any errors occurred
 	if len(errors) > 0 {
