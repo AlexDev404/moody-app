@@ -1,5 +1,5 @@
-// Filename: internal/data/feedback.go
-package data
+// Filename: database/models/feedback.go
+package models
 
 import (
 	"context"
@@ -20,7 +20,7 @@ type Feedback struct {
 }
 
 type FeedbackModel struct {
-	DB *sql.DB
+	Database *sql.DB
 }
 
 // Insert adds a new feedback record to the database
@@ -36,7 +36,7 @@ func (m *FeedbackModel) Insert(feedback *Feedback) error {
 	defer cancel()
 	// The Scan() method automatically assigns the returned id and created_at // values to the Feedback struct. This is the reason we needed the address
 	// of the feedback data object
-	return m.DB.QueryRowContext(
+	return m.Database.QueryRowContext(
 		ctx,
 		query,
 		feedback.Fullname,

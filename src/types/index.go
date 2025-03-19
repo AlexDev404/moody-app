@@ -1,6 +1,7 @@
 package types
 
 import (
+	"baby-blog/database/models"
 	"baby-blog/middleware"
 	"log/slog"
 )
@@ -12,4 +13,8 @@ type Application struct {
 
 type TemplateData struct {
 	Data interface{}
+}
+
+type Models struct {
+	Feedback *models.FeedbackModel
 }

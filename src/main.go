@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"baby-blog/database"
+	"baby-blog/database/models"
 	"baby-blog/types"
 	"html/template"
 	"sync"
@@ -22,6 +23,7 @@ import (
 type Application struct {
 	*types.Application
 	templates  *template.Template
+	models     *types.Models
 	bufferPool sync.Pool
 }
 
@@ -177,6 +179,9 @@ flag --dsn=URL`)
 	app = &Application{
 		Application: typesApp,
 		templates:   templates,
+		models: &types.Models{
+			Feedback: &models.FeedbackModel{Database: db},
+		},
 	}
 
 	// Initialize the buffer pool
