@@ -111,9 +111,18 @@ endif
 build-web: copy-wasm
 	cd $(SRC_DIR) && $(GO) $(GOARGS) -o ../$(BIN_DIR)/main
 
+# Define this variable at the top level
 run: build-web
 ifeq ($(BUILD_PLATFORM),LINUX)
+UNAME_R := $(shell uname -r)
+WSL_CHECK := $(shell if echo $(UNAME_R) | grep -iq "WSL"; then echo true; else echo false; fi)
+
+ifeq ($(WSL_CHECK),true)
+	cd $(SRC_DIR) && npm run gow -- . --dsn ${WSL_DB_DSN}
+else
 	cd $(SRC_DIR) && npm run gow -- .
+endif
+
 else
 ifeq ($(BUILD_PLATFORM),WIN32)
 	cd $(SRC_DIR) && go run .
