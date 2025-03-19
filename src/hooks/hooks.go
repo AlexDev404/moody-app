@@ -20,10 +20,8 @@ func Hooks(pageData map[string]interface{}, dbModels *types.Models) map[string]i
 
 	// Create the hooks connector with the custom logger
 	hooks := HooksConnector{
-		Logger: slog.New(handler).With(slog.String("component", "HOOKS")),
+		Logger: slog.New(handler).With(slog.String("component", "Hooks")),
 	}
-
-	hooks.Logger.Info("Hooks initialized.")
 
 	// Call all the hooks that are needed
 	if pageData["Path"] == "feedback/gallery" {
