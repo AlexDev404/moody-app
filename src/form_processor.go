@@ -16,7 +16,7 @@ func (app *Application) POSTHandler(w http.ResponseWriter, r *http.Request) {
 	// Place all form submission routes here
 	switch r.URL.Path {
 	case "/feedback":
-		app.Render(w, r, app.templates, map[string]interface{}{
+		pageErrors := map[string]interface{}{
 			"Errors": map[string]string{
 				"fullname": "Bruh",
 				"email":    "Lmao",
@@ -24,13 +24,13 @@ func (app *Application) POSTHandler(w http.ResponseWriter, r *http.Request) {
 				"message":  "Bad message",
 			},
 			"Message": "Good message",
-		})
-	case "/contact":
-		name := r.FormValue("name")
+		}
+		name := r.FormValue("fullname")
 		email := r.FormValue("email")
+		subject := r.FormValue("subject")
 		message := r.FormValue("message")
 
-		if name == "" || email == "" || message == "" {
+		if name == "" || email == "" || subject == "" || message == "" {
 			app.Logger.Warn("Invalid contact form submission", "name", name, "email", email)
 			http.Error(w, "Missing required fields", http.StatusBadRequest)
 			return
@@ -40,12 +40,13 @@ func (app *Application) POSTHandler(w http.ResponseWriter, r *http.Request) {
 		app.Logger.Info("Contact form submission received",
 			"name", name,
 			"email", email,
+			"subject", subject,
+			"message", message,
 			"message_length", len(message))
 
 		// Here you would typically send an email or store the contact form
-		// For now, just return a success message
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Thank you for your message!"))
+		// For now, just render the page
+		app.Render(w, r, app.templates, pageErrors)
 
 	default:
 		app.Logger.Warn("Unknown POST route accessed", "path", r.URL.Path)
