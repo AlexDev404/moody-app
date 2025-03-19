@@ -3,6 +3,7 @@
 <div class="block mb-6 mt-2">
     <h1 class="text-4xl font-semibold text-gray-800">Feedback Form</h1>
     <p class="text-green-500 text-sm">{{ .Data.PageData.Message }}</p>
+    <p class="text-red-500 text-sm">{{ .Data.PageData.Failure }}</p>
 </div>
 <div class="w-full mx-auto bg-white p-6 rounded-md shadow-md border border-gray-200">
     <form action="/feedback" method="post" class="space-y-6">

@@ -37,18 +37,18 @@ func FeedbackForm(w http.ResponseWriter, r *http.Request) (map[string]interface{
 	if len(errors) > 0 {
 		formErrors = map[string]interface{}{
 			"Errors":  errors,
-			"Message": "Please fix the errors and try again",
+			"Failure": "✗ Please check your errors and try again.",
 		}
-		logger.Warn("Invalid contact form submission", "errors", errors)
+		logger.Warn("Invalid form submission", "errors", errors)
 		return formData, formErrors
 	}
 
-	// Log the contact form submission
-	logger.Info("Contact form submission received",
-		"name", formData["fullname"],
-		"email", formData["email"],
-		"subject", formData["subject"],
-		"message_length", len(formData["message"].(string)))
+	// // Log the contact form submission
+	// logger.Info("Feedback form submission received",
+	// 	"name", formData["fullname"],
+	// 	"email", formData["email"],
+	// 	"subject", formData["subject"],
+	// 	"message_length", len(formData["message"].(string)))
 
 	// No errors
 	return formData, nil

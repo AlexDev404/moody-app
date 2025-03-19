@@ -55,6 +55,7 @@ func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *templa
 		pageData = map[string]interface{}{
 			"Errors":  map[string]string{},
 			"Message": nil,
+			"Failure": nil,
 		}
 	}
 

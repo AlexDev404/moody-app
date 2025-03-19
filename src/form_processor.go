@@ -25,9 +25,8 @@ func (app *Application) POSTHandler(w http.ResponseWriter, r *http.Request) {
 			formData[key] = value
 		}
 
-		app.Render(w, r, app.templates, formData)
 		// Handle database insertion (this part needs proper implementation)
-		if formData != nil {
+		if formErrors == nil {
 			feedbackData := &models.Feedback{
 				Fullname: formData["fullname"].(string),
 				Email:    formData["email"].(string),
@@ -36,10 +35,15 @@ func (app *Application) POSTHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			err := app.models.Feedback.Insert(feedbackData)
 			if err != nil {
-				app.Logger.Error("Failed to insert feedback", "error", err)
+				formData["Failure"] = "✗ Failed to submit feedback. Please try again later."
 
+			} else {
+				formData["Message"] = "✓ Your feedback has been submitted. Thank you!"
 			}
 		}
+
+		// Render the feedback page again with the form data and any errors
+		app.Render(w, r, app.templates, formData)
 	default:
 		app.Logger.Warn("Unknown POST route accessed", "path", r.URL.Path)
 		http.Error(w, "Not Found", http.StatusNotFound)
