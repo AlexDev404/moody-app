@@ -3,6 +3,7 @@ include .envrc
 
 # Variables
 SHELL := /bin/bash
+WSL_CHECK :=
 .DEFAULT_GOAL := all
 
 # Directories
@@ -42,6 +43,7 @@ else
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Linux)
 		BUILD_PLATFORM = LINUX
+		WSL_CHECK = $(shell if [ -f /proc/sys/fs/binfmt_misc/WSLInterop ]; then echo true; else echo false; fi)
 	endif
 	ifeq ($(UNAME_S),Darwin)
 		BUILD_PLATFORM = OSX
@@ -114,9 +116,7 @@ build-web: copy-wasm
 # Define this variable at the top level
 run: build-web
 ifeq ($(BUILD_PLATFORM),LINUX)
-UNAME_R := $(shell uname -r)
-WSL_CHECK := $(shell if echo $(UNAME_R) | grep -iq "WSL"; then echo true; else echo false; fi)
-
+# WSL detection
 ifeq ($(WSL_CHECK),true)
 	cd $(SRC_DIR) && npm run gow -- . --dsn ${WSL_DB_DSN}
 else
