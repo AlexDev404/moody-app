@@ -14,6 +14,7 @@ import (
 
 	"baby-blog/database"
 	"baby-blog/database/models"
+	"baby-blog/hooks"
 	"baby-blog/types"
 	"html/template"
 	"sync"
@@ -53,11 +54,16 @@ func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *templa
 	// Check to see if pageData is null
 	if pageData == nil {
 		pageData = map[string]interface{}{
+			"Path":    path,
 			"Errors":  map[string]string{},
 			"Message": nil,
 			"Failure": nil,
 		}
 	}
+	// Run the hooks
+	pageData = hooks.Hooks(pageData)
+
+	log.Print(pageData)
 
 	// Page-specific data
 	contentData := &types.TemplateData{
