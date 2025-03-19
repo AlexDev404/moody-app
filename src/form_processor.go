@@ -17,8 +17,8 @@ func (app *Application) POSTHandler(w http.ResponseWriter, r *http.Request) {
 	// Place all form submission routes here
 	switch r.URL.Path {
 	case "/feedback":
-		forms.FeedbackForm(w, r)
-		app.Render(w, r, app.templates, nil)
+		formErrors := forms.FeedbackForm(w, r)
+		app.Render(w, r, app.templates, formErrors)
 	default:
 		app.Logger.Warn("Unknown POST route accessed", "path", r.URL.Path)
 		http.Error(w, "Not Found", http.StatusNotFound)
