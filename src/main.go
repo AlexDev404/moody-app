@@ -63,7 +63,7 @@ func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *templa
 	// Run the hooks
 	pageData = hooks.Hooks(pageData)
 
-	log.Print(pageData)
+	//log.Print(pageData)
 
 	// Page-specific data
 	contentData := &types.TemplateData{
