@@ -45,3 +45,35 @@ func (m *FeedbackModel) Insert(feedback *Feedback) error {
 		feedback.Email,
 	).Scan(&feedback.ID, &feedback.CreatedAt)
 }
+
+func (m *FeedbackModel) GetAll() ([]*Feedback, error) {
+	query := `
+		SELECT id, created_at, fullname, subject, message, email
+		FROM feedback
+		ORDER BY created_at DESC`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.Database.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	feedbacks := []*Feedback{}
+
+	for rows.Next() {
+		var feedback Feedback
+		if err := rows.Scan(&feedback.ID, &feedback.CreatedAt, &feedback.Fullname, &feedback.Subject, &feedback.Message, &feedback.Email); err != nil {
+			return nil, err
+		}
+		feedbacks = append(feedbacks, &feedback)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return feedbacks, nil
+}

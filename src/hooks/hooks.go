@@ -1,6 +1,7 @@
 package hooks
 
 import (
+	"baby-blog/types"
 	"log/slog"
 	"os"
 )
@@ -9,7 +10,7 @@ type HooksConnector struct {
 	Logger *slog.Logger
 }
 
-func Hooks(pageData map[string]interface{}) map[string]interface{} {
+func Hooks(pageData map[string]interface{}, dbModels *types.Models) map[string]interface{} {
 	// Create a handler that prepends "[HOOKS]" to log messages
 	opts := &slog.HandlerOptions{
 		Level:     slog.LevelInfo,
@@ -26,7 +27,7 @@ func Hooks(pageData map[string]interface{}) map[string]interface{} {
 
 	// Call all the hooks that are needed
 	if pageData["Path"] == "feedback/gallery" {
-		pageData = hooks.PageLoad(pageData)
+		pageData = hooks.PageLoad(pageData, dbModels)
 	}
 
 	return pageData
