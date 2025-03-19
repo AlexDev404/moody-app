@@ -15,6 +15,16 @@ func (app *Application) POSTHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Place all form submission routes here
 	switch r.URL.Path {
+	case "/feedback":
+		app.Render(w, r, app.templates, map[string]interface{}{
+			"Errors": map[string]string{
+				"fullname": "Bruh",
+				"email":    "Lmao",
+				"subject":  "Subject is required",
+				"message":  "Bad message",
+			},
+			"Message": "Good message",
+		})
 	case "/contact":
 		name := r.FormValue("name")
 		email := r.FormValue("email")

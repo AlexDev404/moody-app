@@ -27,7 +27,7 @@ type Application struct {
 	bufferPool sync.Pool
 }
 
-func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *template.Template) {
+func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *template.Template, pageData map[string]interface{}) {
 	// Get the URL path
 	path := r.URL.Path[1:]
 	disallowedRoutes := []string{"context", "head", "header", "footer", "current_ctx", "index"}
@@ -49,10 +49,29 @@ func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *templa
 	// First try to get the template by path if it's not root
 	var templateContent string
 	var tmpl *template.Template = t.Lookup(path)
+
+	// Check to see if pageData is null
+	if pageData == nil {
+		pageData = map[string]interface{}{
+			"Errors":  map[string]string{},
+			"Message": nil,
+		}
+	}
+
+	// Page-specific data
+	contentData := &types.TemplateData{
+		Data: map[string]interface{}{
+			"Path":     path,
+			"PageData": pageData,
+		},
+	}
+
+	// Execute the page with the data
+	var contentErr error
 	if path != "/" {
 		if tmpl != nil {
 			var buf bytes.Buffer
-			tmpl.Execute(&buf, nil)
+			contentErr = tmpl.Execute(&buf, contentData)
 			templateContent = buf.String()
 		} else {
 			w.WriteHeader(http.StatusNotFound)
@@ -61,10 +80,12 @@ func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *templa
 		}
 	}
 
+	// Layout-specific data
 	data := &types.TemplateData{
 		Data: map[string]interface{}{
-			"Path": path,
-			"HTML": template.HTML(templateContent),
+			"Path":     path,
+			"HTML":     template.HTML(templateContent),
+			"PageData": pageData,
 		},
 	}
 	// Section: Render Layouts
@@ -80,21 +101,23 @@ func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *templa
 
 	// Apply the layout
 	var err error
-	if layout == nil {
-		// Render the template directly
-		err = t.ExecuteTemplate(pageBuf, "layout/app", data)
-	} else {
-		// Render the template with the layout
-		err = layout.Execute(pageBuf, data)
+	if contentErr == nil {
+		if layout == nil {
+			// Render the template directly
+			err = t.ExecuteTemplate(pageBuf, "layout/app", data)
+		} else {
+			// Render the template with the layout
+			err = layout.Execute(pageBuf, data)
+		}
+		if err != nil {
+			app.Logger.Error("Error rendering page", "error", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		_, err = pageBuf.WriteTo(w)
 	}
-	if err != nil {
-		app.Logger.Error("Error rendering page", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-	_, err = pageBuf.WriteTo(w)
-	if err != nil {
-		app.Logger.Error("Failed to write template to response: ", "error", err)
+	if contentErr != nil || err != nil {
+		app.Logger.Error("Failed to write template to response: ", "error", err, "content_err", contentErr)
 		w.WriteHeader(http.StatusInternalServerError)
 		http.ServeFile(w, r, "./static/errors/500.html")
 	}
@@ -199,7 +222,7 @@ flag --dsn=URL`)
 		// Only respond to get requests
 		switch r.Method {
 		case http.MethodGet:
-			app.Render(w, r, app.templates)
+			app.Render(w, r, app.templates, nil)
 		case http.MethodPost:
 			app.POSTHandler(w, r)
 		default:
