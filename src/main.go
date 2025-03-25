@@ -28,6 +28,7 @@ type Application struct {
 
 func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *template.Template, pageData map[string]interface{}) {
 	path := app.getPath(r)
+	print(path)
 	if app.isDisallowedRoute(path) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return
@@ -111,7 +112,7 @@ func (app *Application) getPath(r *http.Request) string {
 }
 
 func (app *Application) isDisallowedRoute(path string) bool {
-	disallowedRoutes := []string{"context", "head", "header", "footer", "current_ctx", "index"}
+	disallowedRoutes := []string{"context", "head", "header", "footer", "current_ctx"}
 	for _, route := range disallowedRoutes {
 		if path == route {
 			return true
