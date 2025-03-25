@@ -20,6 +20,23 @@ func FeedbackForm(w http.ResponseWriter, r *http.Request, v *validator.Validator
 	}
 
 	// Validate form data
+	errors := validateFormData(formData, v)
+
+	// Check if any errors occurred
+	if len(errors) > 0 {
+		formErrors = map[string]interface{}{
+			"Errors":  errors,
+			"Failure": "✗ Please check your errors and try again.",
+		}
+		logger.Warn("Invalid form submission", "errors", errors)
+		return formData, formErrors
+	}
+
+	// No errors
+	return formData, nil
+}
+
+func validateFormData(formData map[string]interface{}, v *validator.Validator) map[string]string {
 	errors := v.Errors
 
 	// Check if the fullname is valid
@@ -38,23 +55,5 @@ func FeedbackForm(w http.ResponseWriter, r *http.Request, v *validator.Validator
 	v.Check(validator.MaxLength(formData["message"].(string), 500), "message", "Message must be less than 500 characters")
 	v.Check(validator.MinLength(formData["message"].(string), 10), "message", "Message must be at least 10 characters")
 
-	// Check if any errors occurred
-	if len(errors) > 0 {
-		formErrors = map[string]interface{}{
-			"Errors":  errors,
-			"Failure": "✗ Please check your errors and try again.",
-		}
-		logger.Warn("Invalid form submission", "errors", errors)
-		return formData, formErrors
-	}
-
-	// // Log the contact form submission
-	// logger.Info("Feedback form submission received",
-	// 	"name", formData["fullname"],
-	// 	"email", formData["email"],
-	// 	"subject", formData["subject"],
-	// 	"message_length", len(formData["message"].(string)))
-
-	// No errors
-	return formData, nil
+	return errors
 }

@@ -1,5 +1,3 @@
-// Filename: main.go
-
 package main
 
 import (
@@ -29,29 +27,12 @@ type Application struct {
 }
 
 func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *template.Template, pageData map[string]interface{}) {
-	// Get the URL path
-	path := r.URL.Path[1:]
-	disallowedRoutes := []string{"context", "head", "header", "footer", "current_ctx", "index"}
-	// Remove any trailing slashes
-	if path == "" {
-		path = "index"
-	} else {
-		path = strings.TrimSuffix(path, "/")
-		// Check if path is in disallowedRoutes
-		for _, route := range disallowedRoutes {
-			if path == route {
-				http.Error(w, "Forbidden", http.StatusForbidden)
-				return
-			}
-		}
+	path := app.getPath(r)
+	if app.isDisallowedRoute(path) {
+		http.Error(w, "Forbidden", http.StatusForbidden)
+		return
 	}
 
-	// TemplateData is a struct that holds the title, body, and data for the template
-	// First try to get the template by path if it's not root
-	var templateContent string
-	var tmpl *template.Template = t.Lookup(path)
-
-	// Check to see if pageData is null
 	if pageData == nil {
 		pageData = map[string]interface{}{
 			"Path":    path,
@@ -60,12 +41,9 @@ func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *templa
 			"Failure": nil,
 		}
 	}
-	// Run the hooks
-	pageData = hooks.Hooks(pageData, app.models)
 
-	//log.Print(pageData)
+	pageData = app.runHooks(pageData)
 
-	// Page-specific data
 	contentData := &types.TemplateData{
 		Data: map[string]interface{}{
 			"Path":     path,
@@ -73,7 +51,8 @@ func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *templa
 		},
 	}
 
-	// Execute the page with the data
+	var templateContent string
+	var tmpl *template.Template = t.Lookup(path)
 	var contentErr error
 	if path != "/" {
 		if tmpl != nil {
@@ -87,7 +66,6 @@ func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *templa
 		}
 	}
 
-	// Layout-specific data
 	data := &types.TemplateData{
 		Data: map[string]interface{}{
 			"Path":     path,
@@ -95,25 +73,17 @@ func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *templa
 			"PageData": pageData,
 		},
 	}
-	// Section: Render Layouts
-	// First: Let's check if there's a layout for the path
-	// Remove the leading text following the last / in the string
-	path = strings.TrimSuffix(path, "/"+path[strings.LastIndex(path, "/")+1:])
-	layout := t.Lookup("layout/" + path)
 
-	// Page buffer
+	layout := t.Lookup("layout/" + path)
 	pageBuf := app.bufferPool.Get().(*bytes.Buffer)
 	pageBuf.Reset()
 	defer app.bufferPool.Put(pageBuf)
 
-	// Apply the layout
 	var err error
 	if contentErr == nil {
 		if layout == nil {
-			// Render the template directly
 			err = t.ExecuteTemplate(pageBuf, "layout/app", data)
 		} else {
-			// Render the template with the layout
 			err = layout.Execute(pageBuf, data)
 		}
 		if err != nil {
@@ -128,23 +98,43 @@ func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *templa
 		w.WriteHeader(http.StatusInternalServerError)
 		http.ServeFile(w, r, "./static/errors/500.html")
 	}
+}
 
+func (app *Application) getPath(r *http.Request) string {
+	path := r.URL.Path[1:]
+	if path == "" {
+		path = "index"
+	} else {
+		path = strings.TrimSuffix(path, "/")
+	}
+	return path
+}
+
+func (app *Application) isDisallowedRoute(path string) bool {
+	disallowedRoutes := []string{"context", "head", "header", "footer", "current_ctx", "index"}
+	for _, route := range disallowedRoutes {
+		if path == route {
+			return true
+		}
+	}
+	return false
+}
+
+func (app *Application) runHooks(pageData map[string]interface{}) map[string]interface{} {
+	return hooks.Hooks(pageData, app.models)
 }
 
 func getTemplates() (*template.Template, error) {
-	// Parse the initial templates
 	log.Println("Parsing 'initial' templates...")
 	templates, err := template.ParseGlob("templates/*.mustache")
 	if err != nil {
 		return nil, err
 	}
-	// Add the partials to the templates
 	log.Println("Parsing 'partial' templates...")
 	templates, err = templates.ParseGlob("templates/partials/*.mustache")
 	if err != nil {
 		return nil, err
 	}
-	// Add the routes to the templates
 	log.Println("Parsing 'route' templates...")
 	err = filepath.Walk("templates/routes", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -166,18 +156,13 @@ func getTemplates() (*template.Template, error) {
 	return templates, nil
 }
 
-// Starts the web server and listens for requests
 func (app *Application) startup() {
-	// Parse the address
 	addr := flag.String("addr", "4000", "HTTP network address")
-	// Connect to the database
 	dsn := flag.String("dsn", "postgresql://postgres:postgres@localhost:5432/baby_blog?sslmode=disable", "PostgreSQL DSN")
 	flag.Parse()
 
-	// Serve the static files
 	fileServer := http.FileServer(http.Dir("static"))
 
-	// Create a new ServeMux and register the handler functions
 	mux := http.NewServeMux()
 	mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
 
@@ -187,7 +172,6 @@ func (app *Application) startup() {
 		log.Fatal("Error parsing templates: ", tErr)
 	}
 
-	// the call to openDB() sets up our connection pool
 	db, dbErr := database.OpenDB(*dsn)
 	if dbErr != nil {
 		log.Print(dbErr.Error())
@@ -205,7 +189,6 @@ flag --dsn=URL`)
 		Logger: logger,
 	}
 
-	// Initialize the application
 	app = &Application{
 		Application: typesApp,
 		templates:   templates,
@@ -214,7 +197,6 @@ flag --dsn=URL`)
 		},
 	}
 
-	// Initialize the buffer pool
 	app.bufferPool = sync.Pool{
 		New: func() any {
 			return &bytes.Buffer{}
@@ -224,9 +206,7 @@ flag --dsn=URL`)
 	log.Printf("Templates loaded: %v", templates.DefinedTemplates())
 	log.Printf("App templates: %v", app.templates.DefinedTemplates())
 
-	// Register the handler
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// Only respond to get requests
 		switch r.Method {
 		case http.MethodGet:
 			app.Render(w, r, app.templates, nil)
@@ -235,15 +215,12 @@ flag --dsn=URL`)
 		default:
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		}
-
 	})
 
 	app.Logger.Info("Now listening on port http://127.0.0.1:" + *addr)
 
-	// Start listening for requests (start the web server)
 	err := http.ListenAndServe((":" + *addr), app.Middleware.LoggingMiddleware(mux))
 
-	// Log error message if server quits unexpectedly
 	if err != nil {
 		panic(err.Error())
 	}

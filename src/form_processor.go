@@ -51,3 +51,17 @@ func (app *Application) POSTHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Not Found", http.StatusNotFound)
 	}
 }
+
+func validateFeedbackForm(w http.ResponseWriter, r *http.Request, v *validator.Validator) (map[string]interface{}, map[string]interface{}) {
+	return forms.FeedbackForm(w, r, v)
+}
+
+func insertFeedbackData(app *Application, formData map[string]interface{}) error {
+	feedbackData := &models.Feedback{
+		Fullname: formData["fullname"].(string),
+		Email:    formData["email"].(string),
+		Subject:  formData["subject"].(string),
+		Message:  formData["message"].(string),
+	}
+	return app.models.Feedback.Insert(feedbackData)
+}
