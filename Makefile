@@ -8,11 +8,8 @@ WSL_CHECK :=
 
 # Directories
 SRC_DIR := src
-SRC_WASM_DIR := src-wasm
 BUILD_DIR := build
 BIN_DIR := bin
-WASM_DIR := $(SRC_DIR)/static/wasm/bundle
-WASM_DIR_WIN := $(SRC_DIR)\static\wasm\bundle
 
 # Compiler and flags
 GO := go
@@ -21,7 +18,7 @@ GOFLAGS :=
 
 # Targets
 all: run
-.PHONY: all initialize build-wasm build-web clean create_migrations
+.PHONY: all initialize build-web clean create_migrations
 
 # ------------------ BEGIN PLATFORM AND ARCHITECTURE DETECTION --------------------
 BUILD_PLATFORM=
@@ -77,15 +74,13 @@ initialize:
 	@echo "The operating system of this system is: $(BUILD_PLATFORM)"
 	@echo "The processor architecture of this system is: $(BUILD_ARCH)"
 	cd $(SRC_DIR) && $(GO) mod download
-	cd $(SRC_WASM_DIR) && $(GO) mod download
 	
 ifeq ($(BUILD_PLATFORM),LINUX)
 		mkdir -p $(BIN_DIR)
 		mkdir -p $(BUILD_DIR)
-		mkdir -p $(WASM_DIR)
 else
 ifeq ($(BUILD_PLATFORM),WIN32)
-		powershell.exe -Command "foreach ($$dir in @('$(BIN_DIR)', '$(BUILD_DIR)', '$(WASM_DIR)')) { if (!(Test-Path -Path $$dir)) { New-Item -ItemType Directory -Path $$dir -Force } }"
+		powershell.exe -Command "foreach ($$dir in @('$(BIN_DIR)', '$(BUILD_DIR)')) { if (!(Test-Path -Path $$dir)) { New-Item -ItemType Directory -Path $$dir -Force } }"
 endif
 endif
 
@@ -112,14 +107,10 @@ clean:
 ifeq ($(BUILD_PLATFORM),LINUX)
 	rm -rf $(BUILD_DIR)
 	rm -rf $(BIN_DIR)
-	rm -rf $(WASM_DIR)
-	rm -rf $(SRC_WASM_DIR)/$(BUILD_DIR)
 else
 ifeq ($(BUILD_PLATFORM),WIN32)
 	rd /s /q $(BUILD_DIR)
 	rd /s /q $(BIN_DIR)
-	rd /s /q $(WASM_DIR_WIN)
-	rd /s /q $(SRC_WASM_DIR)\$(BUILD_DIR)
 endif
 endif
 

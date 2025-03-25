@@ -167,3 +167,4 @@ bin
 src-wasm/build
 src/static/wasm/bundle
 .envrc
+drizzle.config.ts
