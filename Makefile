@@ -117,8 +117,17 @@ endif
 create_migrations:
 	migrate create -seq -ext=.sql -dir=./migrations create_feedback_table
 
+migrate:
+ifeq ($(BUILD_PLATFORM),LINUX)
+	migrate -path ./migrations -database ${DB_DSN} up
+else
+ifeq ($(BUILD_PLATFORM),WIN32)
+	migrate -path ./migrations -database ${DB_DSN} up
+endif
+endif
+
 db/psql:
-	psql ${FEEDBACK_DB_DSN}
+	psql ${DB_DSN}
 
 dumb_migrations:
 	migrate create -seq -ext=.sql -dir=./migration create {something} table
