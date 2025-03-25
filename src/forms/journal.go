@@ -2,13 +2,8 @@ package forms
 
 import (
 	"baby-blog/forms/validator"
-	"log/slog"
 	"net/http"
-	"os"
 )
-
-// Create a new logger instance
-var logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 func JournalForm(w http.ResponseWriter, r *http.Request, v *validator.Validator) (map[string]interface{}, map[string]interface{}) {
 	var formErrors map[string]interface{}
