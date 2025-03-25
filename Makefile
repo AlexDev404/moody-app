@@ -88,29 +88,8 @@ ifeq ($(BUILD_PLATFORM),WIN32)
 		powershell.exe -Command "foreach ($$dir in @('$(BIN_DIR)', '$(BUILD_DIR)', '$(WASM_DIR)')) { if (!(Test-Path -Path $$dir)) { New-Item -ItemType Directory -Path $$dir -Force } }"
 endif
 endif
-build-wasm: initialize
-ifeq ($(BUILD_PLATFORM),LINUX)
-	cd $(SRC_WASM_DIR) && GOOS=js GOARCH=wasm $(GO) $(GOARGS) -o $(BUILD_DIR)/main.wasm
-else
-ifeq ($(BUILD_PLATFORM),WIN32)
-	cd $(SRC_WASM_DIR) && powershell.exe -Command "$$env:GOOS='js'; $$env:GOARCH='wasm'; & $(GO) $(GOARGS) -o $(BUILD_DIR)/main.wasm"
-endif
-endif
 
-copy-wasm: build-wasm
-# cp $(SRC_WASM_DIR)/$(BUILD_DIR)/main.wasm $(BIN_DIR)/main.wasm
-# cp "$(SRC_WASM_DIR)/wasm_exec.js" $(BIN_DIR)/wasm_exec.js
-ifeq ($(BUILD_PLATFORM),LINUX)
-	cp $(SRC_WASM_DIR)/$(BUILD_DIR)/main.wasm $(WASM_DIR)/main.wasm
-	cp "$(SRC_WASM_DIR)/wasm_exec.js" $(WASM_DIR)/wasm_exec.js
-else
-ifeq ($(BUILD_PLATFORM),WIN32)
-	copy $(SRC_WASM_DIR)\$(BUILD_DIR)\main.wasm $(WASM_DIR_WIN)\main.wasm
-	copy "$(SRC_WASM_DIR)\wasm_exec.js" $(WASM_DIR_WIN)\wasm_exec.js
-endif
-endif
-
-build-web: copy-wasm
+build-web: initialize
 	cd $(SRC_DIR) && $(GO) $(GOARGS) -o ../$(BIN_DIR)/main
 
 # Define this variable at the top level
@@ -149,3 +128,6 @@ create_migrations:
 
 db/psql:
 	psql ${FEEDBACK_DB_DSN}
+
+dumb_migrations:
+	migrate create -seq -ext=.sql -dir=./migration create {something} table

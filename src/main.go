@@ -127,12 +127,12 @@ func (app *Application) runHooks(pageData map[string]interface{}) map[string]int
 
 func getTemplates() (*template.Template, error) {
 	log.Println("Parsing 'initial' templates...")
-	templates, err := template.ParseGlob("templates/*.mustache")
+	templates, err := template.ParseGlob("templates/*.tmpl")
 	if err != nil {
 		return nil, err
 	}
 	log.Println("Parsing 'partial' templates...")
-	templates, err = templates.ParseGlob("templates/partials/*.mustache")
+	templates, err = templates.ParseGlob("templates/partials/*.tmpl")
 	if err != nil {
 		return nil, err
 	}
@@ -141,7 +141,7 @@ func getTemplates() (*template.Template, error) {
 		if err != nil {
 			return err
 		}
-		if !info.IsDir() && strings.HasSuffix(path, ".mustache") {
+		if !info.IsDir() && strings.HasSuffix(path, ".tmpl") {
 			var tmpl *template.Template
 			tmpl, err = templates.ParseFiles(path)
 			if err != nil {
