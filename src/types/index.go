@@ -17,4 +17,6 @@ type TemplateData struct {
 
 type Models struct {
 	Feedback *models.FeedbackModel
+	Journal  *models.JournalModel
+	Todo     *models.TodoModel
 }
