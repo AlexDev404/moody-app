@@ -84,6 +84,9 @@ flag --dsn=URL`)
 		app.Render(w, r, app.templates, nil)
 	})
 
+	mux.HandleFunc("GET /journals", func(w http.ResponseWriter, r *http.Request) {
+		app.Render(w, r, app.templates, nil)
+	})
 	mux.HandleFunc("/journal", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
@@ -95,6 +98,9 @@ flag --dsn=URL`)
 		}
 	})
 
+	mux.HandleFunc("GET /todos", func(w http.ResponseWriter, r *http.Request) {
+		app.Render(w, r, app.templates, nil)
+	})
 	mux.HandleFunc("/todo", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
@@ -106,6 +112,9 @@ flag --dsn=URL`)
 		}
 	})
 
+	mux.HandleFunc("GET /feedbacks", func(w http.ResponseWriter, r *http.Request) {
+		app.Render(w, r, app.templates, nil)
+	})
 	mux.HandleFunc("/feedback", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
