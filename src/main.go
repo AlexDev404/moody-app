@@ -10,8 +10,6 @@ import (
 
 	"baby-blog/database"
 	"baby-blog/database/models"
-	"baby-blog/forms"
-	"baby-blog/forms/validator"
 	"baby-blog/hooks"
 	"baby-blog/types"
 	"html/template"
@@ -91,8 +89,7 @@ flag --dsn=URL`)
 		case http.MethodGet:
 			app.Render(w, r, app.templates, nil)
 		case http.MethodPost:
-			forms.JournalForm(w, r, validator.NewValidator())
-			//app.JournalHandler(w, r)
+			app.JournalHandler(w, r)
 		default:
 			http.Error(w, MainServerMethodNotAllowedMessage, http.StatusMethodNotAllowed)
 		}

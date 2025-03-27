@@ -34,6 +34,7 @@ func validateJournalFormData(formData map[string]interface{}, v *validator.Valid
 
 	// Check if the title is valid
 	v.Check(validator.NotBlank(formData["title"].(string)), "title", "Title is required")
+	v.Check(validator.MinLength(formData["title"].(string), 3), "title", "Title must be at least 3 characters")
 	v.Check(validator.MaxLength(formData["title"].(string), 100), "title", "Title must be less than 100 characters")
 
 	// Check if the content is valid
