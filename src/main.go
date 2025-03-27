@@ -24,8 +24,6 @@ type Application struct {
 	templates    *template.Template
 	models       *types.Models
 	bufferPool   sync.Pool
-	JournalModel *models.JournalModel
-	TodoModel    *models.TodoModel
 }
 
 func (app *Application) runHooks(pageData map[string]interface{}) map[string]interface{} {
@@ -96,7 +94,7 @@ flag --dsn=URL`)
 			forms.JournalForm(w, r, validator.NewValidator())
 			//app.JournalHandler(w, r)
 		default:
-			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			http.Error(w, , http.StatusMethodNotAllowed)
 		}
 	})
 
@@ -107,7 +105,18 @@ flag --dsn=URL`)
 		case http.MethodPost:
 			app.TodoHandler(w, r)
 		default:
-			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			http.Error(w, MainServerMethodNotAllowedMessage, http.StatusMethodNotAllowed)
+		}
+	})
+
+	mux.HandleFunc("/feedback", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			app.Render(w, r, app.templates, nil)
+		case http.MethodPost:
+			app.FeedbackHandler(w, r)
+		default:
+			http.Error(w, MainServerMethodNotAllowedMessage, http.StatusMethodNotAllowed)
 		}
 	})
 
@@ -123,64 +132,4 @@ flag --dsn=URL`)
 func main() {
 	app := &Application{}
 	app.startup()
-}
-
-func (app *Application) JournalHandler(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		app.Logger.Error("Failed to parse form", "error", err)
-		http.Error(w, "Bad Request", http.StatusBadRequest)
-		return
-	}
-
-	validator := validator.NewValidator()
-	formData, formErrors := forms.JournalForm(w, r, validator)
-
-	for key, value := range formErrors {
-		formData[key] = value
-	}
-
-	if formErrors == nil {
-		journalData := &models.Journal{
-			Title:   formData["title"].(string),
-			Content: formData["content"].(string),
-		}
-		err := app.JournalModel.Insert(journalData)
-		if err != nil {
-			formData["Failure"] = "✗ Failed to submit journal entry. Please try again later."
-		} else {
-			formData["Message"] = "✓ Your journal entry has been submitted. Thank you!"
-		}
-	}
-
-	app.Render(w, r, app.templates, formData)
-}
-
-func (app *Application) TodoHandler(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		app.Logger.Error("Failed to parse form", "error", err)
-		http.Error(w, "Bad Request", http.StatusBadRequest)
-		return
-	}
-
-	validator := validator.NewValidator()
-	formData, formErrors := forms.TodoForm(w, r, validator)
-
-	for key, value := range formErrors {
-		formData[key] = value
-	}
-
-	if formErrors == nil {
-		todoData := &models.Todo{
-			Task:      formData["task"].(string),
-			Completed: false,
-		}
-		err := app.TodoModel.Insert(todoData)
-		if err != nil {
-			formData["Failure"] = "✗ Failed to submit todo item. Please try again later."
-		} else {
-			formData["Message"] = "✓ Your todo item has been submitted. Thank you!"
-		}
-	}
-
-	app.Render(w, r, app.templates, formData)
 }

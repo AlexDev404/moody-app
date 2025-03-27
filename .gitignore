@@ -168,3 +168,4 @@ src-wasm/build
 src/static/wasm/bundle
 .envrc
 drizzle.config.ts
+src/tailwind.config.js

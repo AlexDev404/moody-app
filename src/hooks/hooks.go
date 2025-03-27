@@ -23,10 +23,8 @@ func Hooks(pageData map[string]interface{}, dbModels *types.Models) map[string]i
 		Logger: slog.New(handler).With(slog.String("component", "Hooks")),
 	}
 
-	// Call all the hooks that are needed
-	if pageData["Path"] == "feedback/gallery" {
-		pageData = hooks.PageLoad(pageData, dbModels)
-	}
+	// Default hook: Render PageData for the current page (if any)
+	pageData = hooks.PageLoad(pageData, dbModels)
 
 	return pageData
 }
