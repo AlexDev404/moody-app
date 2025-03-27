@@ -21,9 +21,9 @@ import (
 // Application is a wrapper for types.Application
 type Application struct {
 	*types.Application
-	templates    *template.Template
-	models       *types.Models
-	bufferPool   sync.Pool
+	templates  *template.Template
+	models     *types.Models
+	bufferPool sync.Pool
 }
 
 func (app *Application) runHooks(pageData map[string]interface{}) map[string]interface{} {
@@ -94,7 +94,7 @@ flag --dsn=URL`)
 			forms.JournalForm(w, r, validator.NewValidator())
 			//app.JournalHandler(w, r)
 		default:
-			http.Error(w, , http.StatusMethodNotAllowed)
+			http.Error(w, MainServerMethodNotAllowedMessage, http.StatusMethodNotAllowed)
 		}
 	})
 

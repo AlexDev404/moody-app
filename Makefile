@@ -71,7 +71,7 @@ ifeq ($(BUILD_PLATFORM),LINUX)
 endif
 
 initialize:
-	@echo "The operating system of this system is: $(BUILD_PLATFORM)"
+	@echo "The operating system of this computer is: $(BUILD_PLATFORM)"
 	@echo "The processor architecture of this system is: $(BUILD_ARCH)"
 	cd $(SRC_DIR) && $(GO) mod download
 	
