@@ -6,11 +6,19 @@
             Stay updated with the latest posts about my experience in web development, programming, and more in the
             Advanced Databases course.
         </p>
+        <a href="/journal">
+            <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                Submit a new journal
+            </button>
+        </a>
     </section>
     <section class="blog-posts">
-        <h2 class="text-xl font-semibold mb-4">Recent Posts</h2>
+        <div class="flex flex-col gap-2 mb-4">
+            <h2 class="text-xl font-semibold">Recent Posts ({{ .Data.PageData.journalCount }})</h2>
+            <p>Sorted by date (descending order)</p>
+        </div>
         {{range .Data.PageData.journals}}
-        <article class="mb-6">
+        <article class="mb-6 px-2 py-2 border rounded-lg">
             <h3 class="text-lg font-bold">{{ .title }}</h3>
             <p class="text-sm text-gray-500">{{ .date }}</p>
             <p class="mt-1">

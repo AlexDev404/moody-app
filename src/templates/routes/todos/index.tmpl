@@ -1,0 +1,37 @@
+{{define "todos"}}
+<main class="p-4">
+    <section class="welcome mb-8">
+        <h1 class="text-2xl font-bold">Todos</h1>
+        <p class="mt-2">
+            Stay updated with the latest posts by submitting a todo
+        </p>
+        <a href="/todo">
+            <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                Submit a todo
+            </button>
+        </a>
+    </section>
+    <section class="blog-posts">
+        <div class="flex flex-col gap-2 mb-4">
+            <h2 class="text-xl font-semibold">Recent Todos ({{ .Data.PageData.todoCount }})</h2>
+            <p>Sorted by date (descending order)</p>
+        </div>
+        {{range .Data.PageData.todos}}
+        <article class="mb-6 px-2 py-2 border rounded-lg">
+            <h3 class="text-lg font-bold">{{ .task }}</h3>
+            <p class="text-sm text-gray-500">Created: {{ .date }}</p>
+            <p class="text-sm text-gray-500">Completed: 
+            {{ if eq .completed "true" }}
+                Yes
+            {{ else }}
+                No
+            {{end}}
+            </p>
+            <p class="mt-1">
+                {{ .content }}
+            </p>
+        </article>
+        {{ end }}
+    </section>
+</main>
+{{end}}

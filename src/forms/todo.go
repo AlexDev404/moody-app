@@ -32,8 +32,9 @@ func validateTodoFormData(formData map[string]interface{}, v *validator.Validato
 	errors := v.Errors
 
 	// Check if the task is valid
-	v.Check(validator.NotBlank(formData["task"].(string)), "task", "Task is required")
-	v.Check(validator.MaxLength(formData["task"].(string), 200), "task", "Task must be less than 200 characters")
+	v.Check(validator.NotBlank(formData["task"].(string)), "task", "Task name is required")
+	v.Check(validator.MinLength(formData["task"].(string), 3), "task", "Task name must be at least 3 characters")
+	v.Check(validator.MaxLength(formData["task"].(string), 200), "task", "Task name must be less than 200 characters")
 
 	return errors
 }
