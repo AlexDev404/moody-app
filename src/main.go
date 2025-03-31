@@ -33,11 +33,6 @@ func (app *Application) startup() {
 	dsn := flag.String("dsn", "postgresql://postgres:postgres@localhost:5432/baby_blog?sslmode=disable", "PostgreSQL DSN")
 	flag.Parse()
 
-	fileServer := http.FileServer(http.Dir("static"))
-
-	mux := http.NewServeMux()
-	mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
-
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	templates, tErr := getTemplates()
 	if tErr != nil {
@@ -77,65 +72,8 @@ flag --dsn=URL`)
 		},
 	}
 
-	// log.Printf("Templates loaded: %v", templates.DefinedTemplates())
-	// log.Printf("App templates: %v", app.templates.DefinedTemplates())
-
-	// Handlers
-	// Root
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		app.Render(w, r, app.templates, nil)
-	})
-
-	// GET /journals
-	mux.HandleFunc("GET /journals", func(w http.ResponseWriter, r *http.Request) {
-		app.Render(w, r, app.templates, nil)
-	})
-
-	// Dual purpose handler for GET /journal and POST /journal
-	mux.HandleFunc("/journal", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			app.Render(w, r, app.templates, nil)
-		case http.MethodPost:
-			app.JournalHandler(w, r)
-		default:
-			http.Error(w, MainServerMethodNotAllowedMessage, http.StatusMethodNotAllowed)
-		}
-	})
-
-	// GET /todos
-	mux.HandleFunc("GET /todos", func(w http.ResponseWriter, r *http.Request) {
-		app.Render(w, r, app.templates, nil)
-	})
-
-	// Dual purpose handler for GET /todo and POST /todo
-	mux.HandleFunc("/todo", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			app.Render(w, r, app.templates, nil)
-		case http.MethodPost:
-			app.TodoHandler(w, r)
-		default:
-			http.Error(w, MainServerMethodNotAllowedMessage, http.StatusMethodNotAllowed)
-		}
-	})
-
-	// GET /feedbacks
-	mux.HandleFunc("GET /feedbacks", func(w http.ResponseWriter, r *http.Request) {
-		app.Render(w, r, app.templates, nil)
-	})
-
-	// Dual purpose handler for GET /feedback and POST /feedback
-	mux.HandleFunc("/feedback", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			app.Render(w, r, app.templates, nil)
-		case http.MethodPost:
-			app.FeedbackHandler(w, r)
-		default:
-			http.Error(w, MainServerMethodNotAllowedMessage, http.StatusMethodNotAllowed)
-		}
-	})
+	// Register the routes
+	mux := app.routes()
 
 	app.Logger.Info("Now listening on port http://127.0.0.1:" + *addr)
 	err := http.ListenAndServe((":" + *addr), app.Middleware.LoggingMiddleware(mux))
