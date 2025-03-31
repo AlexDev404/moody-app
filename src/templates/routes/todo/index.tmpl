@@ -13,7 +13,8 @@
             <input type="text" id="task" name="task" required_ 
                          placeholder="Enter the task"
                          value="{{ .Data.PageData.task }}"
-                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                         class="mt-1 block {{if .Data.PageData.Errors.task }}
+                         invalid{{ end }} w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                          maxlength="200">
         </div>
         

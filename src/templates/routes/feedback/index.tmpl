@@ -13,7 +13,8 @@
             <input type="text" id="fullname" name="fullname" required_ 
                          placeholder="Enter your name"
                          value="{{ .Data.PageData.fullname }}"
-                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                         class="mt-1 block {{if .Data.PageData.Errors.fullname }}
+                         invalid{{ end }} w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                          minlength="2" maxlength="100">
         </div>
         
@@ -23,7 +24,8 @@
             <input type="email" id="email" name="email" required_
                          placeholder="Enter an email address"
                          value="{{ .Data.PageData.email }}"
-                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                         class="mt-1 block {{if .Data.PageData.Errors.email }}
+                         invalid{{ end }} w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
         </div>
         
@@ -33,7 +35,8 @@
             <input type="text" id="subject" name="subject" required_
                          placeholder="Enter a subject line"
                          value="{{ .Data.PageData.subject }}"
-                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                         class="mt-1 block {{if .Data.PageData.Errors.subject }}
+                         invalid{{ end }} w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                          minlength="5" maxlength="200">
         </div>
         
@@ -43,7 +46,8 @@
             <textarea id="message" name="message" rows="5" required_
                                 placeholder="Enter a message"
                                 value="{{ .Data.PageData.message }}"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                class="mt-1 block {{if .Data.PageData.Errors.message }}
+                                invalid{{ end }} w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                 minlength="10" maxlength="1000"></textarea>
         </div>
         

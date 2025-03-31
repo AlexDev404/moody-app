@@ -13,7 +13,8 @@
             <input type="text" id="title" name="title" required_ 
                          placeholder="Enter the title"
                          value="{{ .Data.PageData.title }}"
-                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                         class="mt-1 block {{if .Data.PageData.Errors.title }}
+                         invalid{{ end }} w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                          maxlength="100">
         </div>
         
@@ -23,7 +24,8 @@
             <textarea id="content" name="content" rows="5" required_
                                 placeholder="Enter the content"
                                 value="{{ .Data.PageData.content }}"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                class="mt-1 block {{if .Data.PageData.Errors.content }}
+                                invalid{{ end }} w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                 maxlength="1000"></textarea>
         </div>
         
