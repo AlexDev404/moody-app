@@ -18,7 +18,7 @@ GOFLAGS :=
 
 # Targets
 all: run
-.PHONY: all initialize build-web clean create_migrations
+.PHONY: all initialize build-web clean create_migrations prepare
 
 # ------------------ BEGIN PLATFORM AND ARCHITECTURE DETECTION --------------------
 BUILD_PLATFORM=
