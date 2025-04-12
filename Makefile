@@ -8,8 +8,11 @@ WSL_CHECK :=
 
 # Directories
 SRC_DIR := src
+SRC_WASM_DIR := src-wasm
 BUILD_DIR := build
 BIN_DIR := bin
+WASM_DIR := $(SRC_DIR)/static/wasm/bundle
+WASM_DIR_WIN := $(SRC_DIR)\static\wasm\bundle
 
 # Compiler and flags
 GO := go
@@ -18,7 +21,7 @@ GOFLAGS :=
 
 # Targets
 all: run
-.PHONY: all initialize build-web clean create_migrations prepare
+.PHONY: all initialize build-web build-wasm copy-wasm clean create_migrations prepare
 
 # ------------------ BEGIN PLATFORM AND ARCHITECTURE DETECTION --------------------
 BUILD_PLATFORM=
@@ -74,10 +77,12 @@ initialize:
 	@echo "The operating system of this computer is: $(BUILD_PLATFORM)"
 	@echo "The processor architecture of this system is: $(BUILD_ARCH)"
 	cd $(SRC_DIR) && $(GO) mod download
+	cd $(SRC_WASM_DIR) && $(GO) mod download
 	
 ifeq ($(BUILD_PLATFORM),LINUX)
 		mkdir -p $(BIN_DIR)
 		mkdir -p $(BUILD_DIR)
+		mkdir -p $(WASM_DIR)
 else
 ifeq ($(BUILD_PLATFORM),WIN32)
 		powershell.exe -Command "foreach ($$dir in @('$(BIN_DIR)', '$(BUILD_DIR)')) { if (!(Test-Path -Path $$dir)) { New-Item -ItemType Directory -Path $$dir -Force } }"
@@ -88,7 +93,7 @@ build-web: initialize
 	cd $(SRC_DIR) && $(GO) $(GOARGS) -o ../$(BIN_DIR)/main
 
 # Define this variable at the top level
-run: build-web
+run: build-web copy-wasm
 ifeq ($(BUILD_PLATFORM),LINUX)
 # WSL detection
 ifeq ($(WSL_CHECK),true)
@@ -100,6 +105,28 @@ endif
 else
 ifeq ($(BUILD_PLATFORM),WIN32)
 	cd $(SRC_DIR) && go run .
+endif
+endif
+
+build-wasm: build-web
+ifeq ($(BUILD_PLATFORM),LINUX)
+	cd $(SRC_WASM_DIR) && GOOS=js GOARCH=wasm $(GO) $(GOARGS) -o $(BUILD_DIR)/main.wasm
+else
+ifeq ($(BUILD_PLATFORM),WIN32)
+	cd $(SRC_WASM_DIR) && powershell.exe -Command "$$env:GOOS='js'; $$env:GOARCH='wasm'; & $(GO) $(GOARGS) -o $(BUILD_DIR)/main.wasm"
+endif
+endif
+
+copy-wasm: build-wasm
+# cp $(SRC_WASM_DIR)/$(BUILD_DIR)/main.wasm $(BIN_DIR)/main.wasm
+# cp "$(SRC_WASM_DIR)/wasm_exec.js" $(BIN_DIR)/wasm_exec.js
+ifeq ($(BUILD_PLATFORM),LINUX)
+	cp $(SRC_WASM_DIR)/$(BUILD_DIR)/main.wasm $(WASM_DIR)/main.wasm
+	cp "$(SRC_WASM_DIR)/wasm_exec.js" $(WASM_DIR)/wasm_exec.js
+else
+ifeq ($(BUILD_PLATFORM),WIN32)
+	copy $(SRC_WASM_DIR)\$(BUILD_DIR)\main.wasm $(WASM_DIR_WIN)\main.wasm
+	copy "$(SRC_WASM_DIR)\wasm_exec.js" $(WASM_DIR_WIN)\wasm_exec.js
 endif
 endif
 
