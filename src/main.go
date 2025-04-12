@@ -30,7 +30,7 @@ func (app *Application) runHooks(pageData map[string]interface{}) map[string]int
 
 func (app *Application) startup() {
 	addr := flag.String("addr", "4000", "HTTP network address")
-	dsn := flag.String("dsn", "postgresql://postgres:postgres@localhost:5432/baby_blog?sslmode=disable", "PostgreSQL DSN")
+	dsn := flag.String("dsn", "postgresql://postgres:postgres@localhost:5432/moody?sslmode=disable", "PostgreSQL DSN")
 	flag.Parse()
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
