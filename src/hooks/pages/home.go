@@ -11,16 +11,15 @@ import (
 
 func Home(pageData map[string]interface{}, db *types.Models, r *http.Request, w http.ResponseWriter) map[string]interface{} {
 	// Get today's mood entry if it exists
-	todaysMood, err := db.Moods.GetAll()
+	allMood, err := db.Moods.GetAll()
 	if err != nil {
 		pageData["Failure"] = "Failed to load mood data"
 		return pageData
 	}
 
-	if todaysMood != nil {
-		pageData["emotions_felt"] = len(todaysMood)
-		// pageData["current_mood"] = todaysMood.MoodText
-		// pageData["has_mood_today"] = true
+	if allMood != nil {
+		pageData["emotions_felt"] = len(allMood)
+		pageData["has_mood_today"] = true
 	} else {
 		pageData["emotions_felt"] = 0
 		pageData["has_mood_today"] = false

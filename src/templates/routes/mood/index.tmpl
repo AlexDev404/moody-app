@@ -1,4 +1,4 @@
-{{define "tools"}}
+{{define "mood"}}
 <script defer>
     // Nothing
 </script>
@@ -17,12 +17,10 @@
     <section class="flex flex-col pt-20 pb-64 justify-center items-center gap-12 self-stretch flex-1">
         <!-- Content -->
         <section class="flex flex-col py-2 px-20 justify-center items-center gap-32 self-stretch flex-1">
-            {{ template "partial/tools/headline" . }}
+            <headline class="flex py-16 justify-center items-center">
+                <h1 class="uk-h1 playfair">AI is still being figured out...<br/><br/>Sorry about that &#58;&#40;</h1>
+	        </headline>
         </section>
-        <!-- Content -->
-        {{/* <section class="flex flex-col space-between items-center self-stretch flex-1">
-            {{ template "partial/tools/body" . }}
-        </section> */}}
     </section>
 </main>
 {{end}}
