@@ -1,8 +1,13 @@
-export DB_DSN="postgresql://postgres:postgres@localhost:5432/baby_blog?sslmode=disable"
-export DB_DRIVER="postgres"
-export DB_NAME="baby_blog"
+# Database credentials
 export DB_USER="postgres"
 export DB_PASSWORD="postgres"
+
+# Database connection details
 export DB_HOST="localhost"
 export DB_PORT="5432"
+export DB_NAME="moody"
+export DB_DRIVER="postgres"
 export DB_SSLMODE="disable"
+
+# Construct connection string
+export DB_DSN="postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}"
