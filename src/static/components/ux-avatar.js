@@ -37,4 +37,3 @@ class UxAvatar extends HTMLElement {
 }
 
 export default UxAvatar;
-customElements.define("ux-avatar", UxAvatar);
