@@ -26,5 +26,8 @@ func Hooks(pageData map[string]interface{}, dbModels *types.Models) map[string]i
 	// Default hook: Render PageData for the current page (if any)
 	pageData = hooks.PageLoad(pageData, dbModels)
 
+	pageData["AppName"] = "Moody"
+	pageData["AppVersion"] = "0.1.0"
+
 	return pageData
 }

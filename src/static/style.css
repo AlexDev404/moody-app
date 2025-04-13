@@ -6724,6 +6724,10 @@ th.uk-text-break, td.uk-text-break {
   margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
 }
 
+.self-stretch {
+  align-self: stretch;
+}
+
 .overflow-hidden {
   overflow: hidden;
 }
@@ -6863,6 +6867,11 @@ th.uk-text-break, td.uk-text-break {
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
 }
 
 .font-bold {
