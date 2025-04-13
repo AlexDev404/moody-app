@@ -11,6 +11,18 @@ type HooksConnector struct {
 	Logger *slog.Logger
 }
 
+// Hooks processes the page data before it's sent to the template renderer.
+// It initializes a custom logger for hooks operations, sets up a hooks connector,
+// and enhances the page data with application information and any data from hook functions.
+//
+// Parameters:
+//   - pageData: A map containing the initial data to be passed to the template
+//   - dbModels: Database models for data access operations
+//   - r: The HTTP request object containing client information and request details
+//   - w: The HTTP response writer for modifying the response
+//
+// Returns:
+//   - An enhanced map with additional data from hooks and application defaults
 func Hooks(pageData map[string]interface{}, dbModels *types.Models, r *http.Request, w http.ResponseWriter) map[string]interface{} {
 	// Create a handler that prepends "[HOOKS]" to log messages
 	opts := &slog.HandlerOptions{
