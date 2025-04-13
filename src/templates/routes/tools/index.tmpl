@@ -1,0 +1,28 @@
+{{define "tools"}}
+<script defer>
+    // Nothing
+</script>
+
+<main class="flex flex-col items-center">
+    <!-- Dynamic "mood meter" -->
+    <div class="flex flex-col items-center self-stretch gap-2">
+        <ul class="flex py-2 justify-center items-center self-stretch gap-2" data-uk-tab>
+            <li class="uk-active"><button type="button" class="uk-btn bg-primary-glow text-zinc-900">Today</button></li>
+            <li><button type="button" class="uk-btn uk-btn-default">Yesterday</button></li>
+            <li><button type="button" class="uk-btn uk-btn-default">April - May</button></li>
+            <li><button type="button" class="uk-btn uk-btn-default">June - Jul</button></li>
+            <li><button type="button" class="uk-btn uk-btn-default">Aug - Sep</button></li>
+        </ul>
+    </div>
+    <section class="flex flex-col pt-20 justify-center items-center gap-12 self-stretch flex-1">
+        <!-- Content -->
+        <section class="flex flex-col py-2 px-20 justify-center items-center gap-12 self-stretch flex-1">
+            {{ template "partial/tools/headline" . }}
+        </section>
+        <!-- Content -->
+        <section class="flex flex-col space-between items-center self-stretch flex-1">
+            {{ template "partial/tools/body" . }}
+        </section>
+    </section>
+</main>
+{{end}}

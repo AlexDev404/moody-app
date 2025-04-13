@@ -69,3 +69,7 @@ ux-navigation-item, .ux-link {
   flex: 1 0 0;
   align-self: stretch;
 }
+
+ux-border-glow {
+	background: var(--primary-glow, #7DD3FC);
+}

@@ -39,6 +39,7 @@ window.addEventListener("popstate", async () => {
           newScript.text = script.textContent;
           document.body.appendChild(newScript);
           document.dispatchEvent(event); // Dispatch the appLoad event again for the new content
+          lucide.createIcons(); // Recreate icons if using lucide
           document.body.removeChild(newScript); // Optionally remove after execution
           // Before replacing #content or during route change:
         });

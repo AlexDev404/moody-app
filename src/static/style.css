@@ -6563,10 +6563,6 @@ th.uk-text-break, td.uk-text-break {
   position: fixed;
 }
 
-.relative {
-  position: relative;
-}
-
 .bottom-0 {
   bottom: 0px;
 }
@@ -6632,11 +6628,6 @@ th.uk-text-break, td.uk-text-break {
   display: inline-flex;
 }
 
-.size-16 {
-  width: 4rem;
-  height: 4rem;
-}
-
 .size-14 {
   width: 3.5rem;
   height: 3.5rem;
@@ -6678,6 +6669,10 @@ th.uk-text-break, td.uk-text-break {
   align-items: center;
 }
 
+.justify-start {
+  justify-content: flex-start;
+}
+
 .justify-center {
   justify-content: center;
 }
@@ -6698,12 +6693,20 @@ th.uk-text-break, td.uk-text-break {
   gap: 0.75rem;
 }
 
+.gap-4 {
+  gap: 1rem;
+}
+
 .gap-5 {
   gap: 1.25rem;
 }
 
 .gap-8 {
   gap: 2rem;
+}
+
+.gap-6 {
+  gap: 1.5rem;
 }
 
 .space-y-6 > :not([hidden]) ~ :not([hidden]) {
@@ -6801,6 +6804,10 @@ th.uk-text-break, td.uk-text-break {
   padding: 1.5rem;
 }
 
+.p-1 {
+  padding: 0.25rem;
+}
+
 .px-2 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -6839,6 +6846,14 @@ th.uk-text-break, td.uk-text-break {
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
+}
+
+.pt-8 {
+  padding-top: 2rem;
+}
+
+.pt-20 {
+  padding-top: 5rem;
 }
 
 .text-center {
@@ -6926,6 +6941,11 @@ th.uk-text-break, td.uk-text-break {
   color: rgb(250 250 250 / var(--tw-text-opacity, 1));
 }
 
+.text-zinc-900 {
+  --tw-text-opacity: 1;
+  color: rgb(24 24 27 / var(--tw-text-opacity, 1));
+}
+
 .opacity-50 {
   opacity: 0.5;
 }
@@ -7009,6 +7029,10 @@ ux-navigation-item, .ux-link {
   align-items: center;
   flex: 1 0 0;
   align-self: stretch;
+}
+
+ux-border-glow {
+  background: var(--primary-glow, #7DD3FC);
 }
 
 .hover\:bg-blue-600:hover {

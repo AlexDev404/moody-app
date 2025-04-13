@@ -1,0 +1,31 @@
+{{ define "partial/tools/headline"}}
+<action-center>
+	<headline class="flex py-16 justify-center items-center">
+		<h1 class="uk-h1 playfair">Your Mood: Calm</h1>
+	</headline>
+	<div class="flex flex-col gap-8">
+		<form method="POST" action="/mood">
+			<div class="flex flex-col items-start gap-2 self-stretch">
+				<div data-uk-form-custom class="flex items-start w-full gap-2">
+					<div class="flex flex-col justify-center items-center gap-12 self-stretch w-full">
+						<div class="flex flex-col justify-center items-center gap-8 self-stretch w-full">
+							<div class="flex items-center justify-center gap-2 self-stretch">
+						 		<ux-icon color="#7DFCBC" data-lucide="list-music" name="music-suggestion" class="size-14" stroke-width="1px"></ux-icon>
+								<h2 class="uk-h2 playfair">Suggested Playlist: Not Implemented #1</h2>
+							</div>
+							<div class="flex items-center justify-center gap-2 self-stretch">
+						 		<button class="uk-btn bg-primary-glow text-zinc-900">
+									↻
+								</button>
+								<button class="uk-btn bg-primary-glow flex-1 text-zinc-900">
+									View Playlist
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</action-center>
+{{ end }}

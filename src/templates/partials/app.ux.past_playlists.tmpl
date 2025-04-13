@@ -1,0 +1,26 @@
+{{ define "partial/ux/past-playlists" }}
+<ux-past-playlists class="flex flex-col items-start gap-12 flex-1 self-stretch">
+    <ux-past-playlists-header class="flex items-center justify-start gap-2 self-stretch">
+        <ux-icon color="#7DFCBC" data-lucide="rewind" name="music-suggestion" class="size-14" stroke-width="1px"></ux-icon>
+        <h2 class="uk-h2 playfair">Yesterday's Playlist</h2>
+    </ux-past-playlists-header>
+    <ux-past-playlists-body class="flex flex-col items-start gap-8 self-stretch">
+         {{/* range .Data.PageData.Playlists */}}
+            <ux-border-glow class="p-1 rounded-md w-full flex items-center justify-start">
+                <ux-past-playlist-item class="flex p-4 items-start gap-4 bg-zinc-900 rounded-lg self-stretch w-full">
+                    <ux-avatar src="https://ui-avatars.com/api/?background=random"></ux-avatar>
+                    <ux-past-playlist-item-inner class="flex flex-col items-start gap-2 self-stretch">
+                        <ux-past-playlist-item-header>
+                            <h3 class="uk-h3">{{/* .Name */}}Crystal Tokyo</h3>
+                        </ux-past-playlist-item-header>
+                        <ux-past-playlist-item-body class="flex flex-col items-start gap-6 self-stretch">
+                            <p>{{/* .Description */}}Chieko Kawabe</p>
+                            <button class="uk-btn bg-primary-glow text-zinc-900">Listen to this track</button>
+                        </ux-past-playlist-item-body>
+                    </ux-past-playlist-item-inner>
+                </ux-past-playlist-item>
+            </ux-border-glow>
+        {{/* end */}}
+    </ux-past-playlists-body>
+</ux-past-playlists>
+{{ end }}
