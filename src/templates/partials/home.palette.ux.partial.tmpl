@@ -1,0 +1,46 @@
+{{ define "partial/ux/palette" }}
+<ux-palette class="flex flex-col items-start gap-5 self-stretch">
+	<ux-palette-header>
+		<h2 class="uk-h2 playfair">Or, select an emotion</h2>
+	</ux-palette-header>
+	<ux-palette-body class="flex items-start gap-1 self-stretch">
+		<button class="flex-1">
+			<ux-palette-item data-mood="joy" class="flex flex-col items-center justify-center gap-2 w-full">
+				<ux-palette-item-value>😂</ux-palette-item-value>
+				<ux-palette-item-label>Joy</ux-palette-item-label>
+			</ux-palette-item>
+		</button>
+		<button type="submit" class="flex-1">
+			<ux-palette-item data-mood="happy" class="flex flex-col items-center justify-center gap-2 w-full">
+				<ux-palette-item-value>😊</ux-palette-item-value>
+				<ux-palette-item-label>Happy</ux-palette-item-label>
+			</ux-palette-item>
+		</button>
+		<button type="submit" class="flex-1">
+			<ux-palette-item data-mood="sad" class="flex flex-col items-center justify-center gap-2 w-full">
+				<ux-palette-item-value>😔</ux-palette-item-value>
+				<ux-palette-item-label>Sad</ux-palette-item-label>
+			</ux-palette-item>
+		</button>
+		<button type="submit" class="flex-1">
+			<ux-palette-item data-mood="confused" class="flex flex-col items-center justify-center gap-2 w-full">
+				<ux-palette-item-value>😕</ux-palette-item-value>
+				<ux-palette-item-label>Confused</ux-palette-item-label>
+			</ux-palette-item>
+		</button>
+		<button type="submit" class="flex-1">
+			<ux-palette-item data-mood="love" class="flex flex-col items-center justify-center gap-2 w-full">
+				<ux-palette-item-value>❤️</ux-palette-item-value>
+				<ux-palette-item-label>Love</ux-palette-item-label>
+			</ux-palette-item>
+		</button>
+		<button type="submit" class="flex-1">
+			<ux-palette-item data-mood="angry" class="flex flex-col items-center justify-center gap-2 w-full">
+				<ux-palette-item-value>😠</ux-palette-item-value>
+				<ux-palette-item-label>Angry</ux-palette-item-label>
+			</ux-palette-item>
+		</button>
+	</ux-palette-body>
+</ux-palette>
+
+{{ end }}

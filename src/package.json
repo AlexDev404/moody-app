@@ -33,7 +33,7 @@
       "../templates/",
       "."
     ],
-    "ext": "go,js,json,css,html,tmpl,mustache",
+    "ext": "go,js,json,html,tmpl,mustache",
     "exec": "go run . --dsn postgresql://postgres:postgres@172.19.176.1:5432/moody?sslmode=disable",
     "delay": 2500,
     "signal": "SIGINT"

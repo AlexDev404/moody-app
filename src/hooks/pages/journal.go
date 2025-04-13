@@ -1,3 +1,4 @@
+// Example of a form
 package pages
 
 import (

@@ -1,7 +1,7 @@
 {{define "index"}}
 <script>
   document.addEventListener("uikit:init", () => {
-    var bar = document.getElementById("js-progressbar");
+    var bar = document.getElementById("mood-meter");
 
 
     var animate = setInterval(function () {
@@ -17,17 +17,20 @@
 
 
 <main class="flex flex-col items-center">
-<div class="flex flex-col items-center self-stretch gap-2">
-    <mood-meter-label class="w-full">
-        <p class="uk-text-sm">{{ .Data.PageData.emotions_felt }} Emotions Felt Today So Far</p>
-    </mood-meter-label>
-    <progress
-      id="js-progressbar"
-      class="uk-progress"
-      value="10"
-      max="100"></progress>
-</div>
-
-
+    <!-- Dynamic "mood meter" -->
+    <div class="flex flex-col items-center self-stretch gap-2">
+        <mood-meter-label class="w-full">
+            <p class="uk-text-sm">{{ .Data.PageData.emotions_felt }} Emotions Felt Today So Far</p>
+        </mood-meter-label>
+        <progress
+            id="mood-meter"
+            class="uk-progress"
+            value="10"
+            max="100"></progress>
+    </div>
+    <!-- Content -->
+    <section class="flex flex-col py-2 px-20 justify-center items-center gap-12 self-stretch flex-1">
+        {{ template "partial/headline" . }}
+    </section>
 </main>
 {{end}}

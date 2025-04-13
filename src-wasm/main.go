@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"syscall/js"
 
+	"baby-blog/wasm/pages/home"
 	"baby-blog/wasm/pages/test/buttons"
 )
 
@@ -33,6 +34,8 @@ func (application *WasmApplication) updateDOMContent() {
 	case "test/buttons":
 		buttons.BeginInteractivity()
 		break
+	case "index":
+		home.BeginInteractivity()
 	default:
 		fmt.Println("[WASM]: No implementation for this path")
 		return
