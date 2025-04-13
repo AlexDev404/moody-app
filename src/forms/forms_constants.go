@@ -1,4 +1,4 @@
-package main
+package forms
 
 const FormHandlerErrorMessage = "Failed to parse form"
 const FormHandlerBadRequestMessage = "Bad Request"
