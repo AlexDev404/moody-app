@@ -35,8 +35,9 @@
     ],
     "ext": "go,js,json,css,html,tmpl,mustache",
     "exec": "go run . --dsn postgresql://postgres:postgres@172.19.176.1:5432/moody?sslmode=disable",
-    "delay": 2500
-    },
+    "delay": 2500,
+    "signal": "SIGINT"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alexdev404/baby-blog.git"
