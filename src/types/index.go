@@ -16,5 +16,7 @@ type TemplateData struct {
 }
 
 type Models struct {
-	Mood *models.MoodModel
+	Moods     *models.MoodModel
+	Playlists *models.PlaylistModel
+	Tracks    *models.TrackModel
 }

@@ -60,7 +60,9 @@ flag --dsn=URL`)
 		Application: typesApp,
 		templates:   templates,
 		models: &types.Models{
-			Mood: &models.MoodModel{Database: db},
+			Moods:     &models.MoodModel{Database: db},
+			Playlists: &models.PlaylistModel{Database: db},
+			Tracks:    &models.TrackModel{Database: db},
 		},
 	}
 
