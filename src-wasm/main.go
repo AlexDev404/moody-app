@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"syscall/js"
 
+	"baby-blog/wasm/pages"
 	"baby-blog/wasm/pages/home"
 	"baby-blog/wasm/pages/test/buttons"
 )
@@ -30,6 +31,10 @@ func (application *WasmApplication) GoSetPath(this js.Value, p []js.Value) inter
 }
 
 func (application *WasmApplication) updateDOMContent() {
+	// Default interactivity (Navigation)
+	// This is a global interactivity, so it should be called for all pages
+	pages.BeginInteractivity(application.Path)
+	
 	switch application.Path {
 	case "test/buttons":
 		buttons.BeginInteractivity()

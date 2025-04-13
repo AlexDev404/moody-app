@@ -1,36 +1,29 @@
 {{define "index"}}
-<script>
-  (function() {
-    var bar = document.getElementById("mood-meter");
+<script defer>
+		window.trackEventListener(document, "appLoad", function () {
+				var animate = setInterval(function () {
+				var bar = document.getElementById("mood-meter");
+				bar.value += 10;
 
 
-    var animate = setInterval(function () {
-      bar.value += 10;
-
-
-      if (bar.value >= bar.max) {
-        clearInterval(animate);
-      }
-    }, 1000);
-  })();
+				if (bar.value >= bar.max) {
+					clearInterval(animate);
+				}
+			}, 1000);
+		});
 </script>
 
-
 <main class="flex flex-col items-center">
-    <!-- Dynamic "mood meter" -->
-    <div class="flex flex-col items-center self-stretch gap-2">
-        <mood-meter-label class="w-full">
-            <p class="uk-text-sm">{{ .Data.PageData.emotions_felt }} Emotions Felt Today So Far</p>
-        </mood-meter-label>
-        <progress
-            id="mood-meter"
-            class="uk-progress"
-            value="10"
-            max="100"></progress>
-    </div>
-    <!-- Content -->
-    <section class="flex flex-col py-2 px-20 justify-center items-center gap-12 self-stretch flex-1">
-        {{ template "partial/headline" . }}
-    </section>
+	<!-- Dynamic "mood meter" -->
+	<div class="flex flex-col items-center self-stretch gap-2">
+		<mood-meter-label class="w-full">
+			<p class="uk-text-sm">{{ .Data.PageData.emotions_felt }} Emotions Felt Today So Far</p>
+		</mood-meter-label>
+		<progress id="mood-meter" class="uk-progress" value="10" max="100"></progress>
+	</div>
+	<!-- Content -->
+	<section class="flex flex-col py-2 px-20 justify-center items-center gap-12 self-stretch flex-1">
+		{{ template "partial/headline" . }}
+	</section>
 </main>
 {{end}}
