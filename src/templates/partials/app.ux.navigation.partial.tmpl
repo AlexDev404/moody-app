@@ -1,0 +1,16 @@
+{{ define "partial/ux/navigation" }}
+<ux-navigation class="w-full bg-zinc-800 text-zinc-50">
+    <ux-navigation-item href="/" class="rounded-md bg-zinc-700 px-2 py-12">
+        <ux-icon color="#7DFCBC" data-lucide="sprout" name="home"></ux-icon>
+        <ux-navigation-item-label>Check In</ux-navigation-item-label>
+    </ux-navigation-item>
+    <ux-navigation-item href="/journal" class="rounded-md bg-transparent">
+        <ux-icon color="#FCFCFC" data-lucide="tent" name="tools"></ux-icon>
+        <ux-navigation-item-label>Tools</ux-navigation-item-label>
+    </ux-navigation-item>
+    <ux-navigation-item href="/tools" class="rounded-md bg-transparent">
+        <ux-icon color="#FCFCFC" data-lucide="tent" name="tools"></ux-icon>
+        <ux-navigation-item-label>Tools</ux-navigation-item-label>
+    </ux-navigation-item>
+</ux-navigation>
+{{ end }}

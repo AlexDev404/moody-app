@@ -6648,8 +6648,8 @@ th.uk-text-break, td.uk-text-break {
   justify-content: center;
 }
 
-.justify-between {
-  justify-content: space-between;
+.gap-1 {
+  gap: 0.25rem;
 }
 
 .gap-12 {
@@ -6670,10 +6670,6 @@ th.uk-text-break, td.uk-text-break {
 
 .gap-8 {
   gap: 2rem;
-}
-
-.gap-1 {
-  gap: 0.25rem;
 }
 
 .space-y-6 > :not([hidden]) ~ :not([hidden]) {
@@ -6727,9 +6723,23 @@ th.uk-text-break, td.uk-text-break {
   background-color: rgb(79 70 229 / var(--tw-bg-opacity, 1));
 }
 
+.bg-transparent {
+  background-color: transparent;
+}
+
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
+.bg-zinc-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(63 63 70 / var(--tw-bg-opacity, 1));
+}
+
+.bg-zinc-800 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(39 39 42 / var(--tw-bg-opacity, 1));
 }
 
 .bg-zinc-900 {
@@ -6777,6 +6787,11 @@ th.uk-text-break, td.uk-text-break {
   padding-right: 1rem;
 }
 
+.py-12 {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
 .py-16 {
   padding-top: 4rem;
   padding-bottom: 4rem;
@@ -6804,11 +6819,6 @@ th.uk-text-break, td.uk-text-break {
 .text-4xl {
   font-size: 2.25rem;
   line-height: 2.5rem;
-}
-
-.text-5xl {
-  font-size: 3rem;
-  line-height: 1;
 }
 
 .text-8xl {
@@ -6877,6 +6887,11 @@ th.uk-text-break, td.uk-text-break {
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
+.text-zinc-50 {
+  --tw-text-opacity: 1;
+  color: rgb(250 250 250 / var(--tw-text-opacity, 1));
+}
+
 .opacity-50 {
   opacity: 0.5;
 }
@@ -6897,9 +6912,9 @@ th.uk-text-break, td.uk-text-break {
   --primary-start: 198 93% 74%;
   --primary-end: 157 96% 74%;
   --primary-glow: linear-gradient(
-    180deg,
-    hsl(var(--primary-start)) 0%,
-    hsl(var(--primary-end)) 100%
+	180deg,
+	hsl(var(--primary-start)) 0%,
+	hsl(var(--primary-end)) 100%
   );
 }
 
@@ -6945,6 +6960,21 @@ ux-palette-item:hover {
 ux-palette-item-value {
   font-size: 3rem /* 48px */;
   line-height: 1;
+}
+
+ux-navigation {
+  display: flex;
+  align-items: center;
+}
+
+ux-navigation-item, .ux-link {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  flex: 1 0 0;
+  align-self: stretch;
 }
 
 .hover\:bg-blue-600:hover {

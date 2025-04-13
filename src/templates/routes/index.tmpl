@@ -1,6 +1,6 @@
 {{define "index"}}
 <script>
-  document.addEventListener("uikit:init", () => {
+  (function() {
     var bar = document.getElementById("mood-meter");
 
 
@@ -12,7 +12,7 @@
         clearInterval(animate);
       }
     }, 1000);
-  });
+  })();
 </script>
 
 
