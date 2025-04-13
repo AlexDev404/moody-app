@@ -1,25 +1,31 @@
 {{define "index"}}
-<main class="p-4">
-    <section class="welcome mb-8">
-        <h1 class="text-2xl font-bold">Welcome to Tapir Blog!</h1>
-        <p class="mt-2">
-            Stay updated with the latest posts about my experience in web development, programming, and more in the
-            Advanced Databases course.
-        </p>
-    </section>
-    <section class="blog-posts">
-        <h2 class="text-xl font-semibold mb-4">Hot Links</h2>
-    <div class="flex flex-col space-y-4">
-        <a href="/journals" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded text-center">
-            View Journals
-        </a>
-        <a href="/feedbacks" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded text-center">
-            View Feedbacks
-        </a>
-        <a href="/todos" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded text-center">
-            View Todos
-        </a>
-    </div>
-    </section>
+<script>
+  document.addEventListener("uikit:init", () => {
+    var bar = document.getElementById("js-progressbar");
+
+
+    var animate = setInterval(function () {
+      bar.value += 10;
+
+
+      if (bar.value >= bar.max) {
+        clearInterval(animate);
+      }
+    }, 1000);
+  });
+</script>
+
+
+<main class="flex flex-col items-center">
+<progress
+  id="js-progressbar"
+  class="uk-progress"
+  style="accent-color: white;"
+  value="10"
+  max="100"
+></progress>
+
+
+
 </main>
 {{end}}

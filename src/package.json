@@ -12,15 +12,31 @@
     "manage": "drizzle-kit studio --port=3000",
     "setup-manage": "sudo -u postgres psql -c \"ALTER USER postgres WITH PASSWORD 'postgres';\" -c \"CREATE DATABASE baby_blog;\"",
     "start": "npm run watch",
+    "dev": "nodemon -L",
     "gow": "$(go env GOPATH)/bin/gow run"
   },
   "dependencies": {
     "drizzle-kit": "^0.30.5",
     "drizzle-orm": "^0.40.0",
     "franken-ui": "2.0.0",
+    "nodemon": "^3.1.9",
     "pg": "^8.14.0",
     "tailwindcss": "^3.4.17"
   },
+  "nodemonConfig": {
+    "ignore": [
+      "**/test/**",
+      "**/docs/**"
+    ],
+    "watch": [
+      "../static/errors/",
+      "../templates/",
+      "."
+    ],
+    "ext": "go,js,json,css,html,tmpl,mustache",
+    "exec": "go run . --dsn postgresql://postgres:postgres@172.19.176.1:5432/moody?sslmode=disable",
+    "delay": 2500
+    },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alexdev404/baby-blog.git"

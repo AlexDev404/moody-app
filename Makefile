@@ -97,7 +97,7 @@ run: build-web copy-wasm
 ifeq ($(BUILD_PLATFORM),LINUX)
 # WSL detection
 ifeq ($(WSL_CHECK),true)
-	cd $(SRC_DIR) && npm run gow -- . --dsn ${DB_DSN}
+	cd $(SRC_DIR) && npm run dev -- . --dsn ${DB_DSN}
 else
 	cd $(SRC_DIR) && npm run gow -- .
 endif
