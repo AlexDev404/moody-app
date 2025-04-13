@@ -12,7 +12,7 @@
     "manage": "drizzle-kit studio --port=3000",
     "setup-manage": "sudo -u postgres psql -c \"ALTER USER postgres WITH PASSWORD 'postgres';\" -c \"CREATE DATABASE baby_blog;\"",
     "start": "npm run watch",
-    "gow": "$GOPATH/bin/gow run"
+    "gow": "$(go env GOPATH)/bin/gow run"
   },
   "dependencies": {
     "drizzle-kit": "^0.30.5",
