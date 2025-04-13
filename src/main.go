@@ -60,9 +60,7 @@ flag --dsn=URL`)
 		Application: typesApp,
 		templates:   templates,
 		models: &types.Models{
-			Feedback: &models.FeedbackModel{Database: db},
-			Journal:  &models.JournalModel{Database: db},
-			Todo:     &models.TodoModel{Database: db},
+			Mood: &models.MoodModel{Database: db},
 		},
 	}
 

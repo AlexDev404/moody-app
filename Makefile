@@ -157,4 +157,4 @@ db/psql:
 	psql ${DB_DSN}
 
 dumb_migrations:
-	migrate create -seq -ext=.sql -dir=./migration create {something} table
+	migrate create -seq -ext=.sql -dir=./migrations create {something} table
