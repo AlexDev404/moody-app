@@ -24,8 +24,8 @@ type Application struct {
 	bufferPool sync.Pool
 }
 
-func (app *Application) runHooks(pageData map[string]interface{}) map[string]interface{} {
-	return hooks.Hooks(pageData, app.models)
+func (app *Application) runHooks(pageData map[string]interface{}, r *http.Request, w http.ResponseWriter) map[string]interface{} {
+	return hooks.Hooks(pageData, app.models, r, w)
 }
 
 func (app *Application) startup() {

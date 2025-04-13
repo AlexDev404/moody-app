@@ -3,6 +3,7 @@ package hooks
 import (
 	"baby-blog/types"
 	"log/slog"
+	"net/http"
 	"os"
 )
 
@@ -10,7 +11,7 @@ type HooksConnector struct {
 	Logger *slog.Logger
 }
 
-func Hooks(pageData map[string]interface{}, dbModels *types.Models) map[string]interface{} {
+func Hooks(pageData map[string]interface{}, dbModels *types.Models, r *http.Request, w http.ResponseWriter) map[string]interface{} {
 	// Create a handler that prepends "[HOOKS]" to log messages
 	opts := &slog.HandlerOptions{
 		Level:     slog.LevelInfo,
@@ -24,7 +25,7 @@ func Hooks(pageData map[string]interface{}, dbModels *types.Models) map[string]i
 	}
 
 	// Default hook: Render PageData for the current page (if any)
-	pageData = hooks.PageLoad(pageData, dbModels)
+	pageData = hooks.PageLoad(pageData, dbModels, r, w)
 
 	pageData["AppName"] = "Moody"
 	pageData["AppVersion"] = "0.1.0"

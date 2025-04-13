@@ -34,7 +34,7 @@ func (app *Application) Render(w http.ResponseWriter, r *http.Request, t *templa
 		}
 	}
 
-	pageData = app.runHooks(pageData)
+	pageData = app.runHooks(pageData, r, w)
 
 	contentData := &types.TemplateData{
 		Data: map[string]interface{}{

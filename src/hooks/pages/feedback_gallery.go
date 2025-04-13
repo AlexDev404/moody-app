@@ -2,9 +2,10 @@ package pages
 
 import (
 	"baby-blog/types"
+	"net/http"
 )
 
-func FeedbackGallery(pageData map[string]interface{}, db *types.Models) map[string]interface{} {
+func FeedbackGallery(pageData map[string]interface{}, db *types.Models, r *http.Request, w http.ResponseWriter) map[string]interface{} {
 	// This function is called when the feedback gallery page is loaded
 	// You can add your logic here
 

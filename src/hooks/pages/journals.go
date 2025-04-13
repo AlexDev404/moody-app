@@ -1,8 +1,11 @@
 package pages
 
-import "baby-blog/types"
+import (
+	"baby-blog/types"
+	"net/http"
+)
 
-func Journals(pageData map[string]interface{}, db *types.Models) map[string]interface{} {
+func Journals(pageData map[string]interface{}, db *types.Models, r *http.Request, w http.ResponseWriter) map[string]interface{} {
 	// Get all journals from the database
 	journals, err := db.Journal.GetAll()
 
