@@ -6559,6 +6559,30 @@ th.uk-text-break, td.uk-text-break {
   }
 }
 
+.fixed {
+  position: fixed;
+}
+
+.relative {
+  position: relative;
+}
+
+.bottom-0 {
+  bottom: 0px;
+}
+
+.left-0 {
+  left: 0px;
+}
+
+.right-0 {
+  right: 0px;
+}
+
+.z-10 {
+  z-index: 10;
+}
+
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -6606,6 +6630,16 @@ th.uk-text-break, td.uk-text-break {
 
 .inline-flex {
   display: inline-flex;
+}
+
+.size-16 {
+  width: 4rem;
+  height: 4rem;
+}
+
+.size-14 {
+  width: 3.5rem;
+  height: 3.5rem;
 }
 
 .h-5 {
