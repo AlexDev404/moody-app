@@ -19,7 +19,11 @@ export default {
     "opacity-50",
   ],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        'primary-glow': 'var(--primary-glow)',
+      },
+    },
   },
   plugins: [],
 };

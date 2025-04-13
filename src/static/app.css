@@ -1,3 +1,56 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --primary-start: 198 93% 74%;
+  --primary-end: 157 96% 74%;
+  --primary-glow: linear-gradient(
+    180deg,
+    hsl(var(--primary-start)) 0%,
+    hsl(var(--primary-end)) 100%
+  );
+}
+
+.inter {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.playfair {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  line-height: 48px;
+  letter-spacing: -0.876px;
+}
+.uk-h1 {
+  font-size: 4.75rem /* 76px */;
+  font-weight: 500 !important;
+}
+
+.clip-to-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+progress::-webkit-progress-value {
+  background: var(--primary-glow) !important;
+  border-radius: 0.5rem;
+}
+
+ux-palette-item {
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+ux-palette-item:hover {
+    transform: translateY(-3px);
+}
+
+ux-palette-item-value {
+  font-size: 3rem /* 48px */;
+  line-height: 1;
+}
