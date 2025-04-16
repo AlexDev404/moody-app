@@ -1,4 +1,4 @@
-import LifecycleManager from "./index.js";
+import LifecycleManager from "./lifecycle-manager.js";
 const event = new CustomEvent("appLoad", {
   detail: { timestamp: Date.now(), path: location.pathname },
 });
