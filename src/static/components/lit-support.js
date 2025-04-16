@@ -8,4 +8,5 @@ import * as LitUnsafeHTML from "https://cdn.jsdelivr.net/npm/lit-html/directives
 // Merge into a fresh object (Lit stays immutable)
 const Lit = { ...Lit_, ...LitUnsafeHTML };
 window.Lit = Lit;
+window.App = document.getElementById("content");
 // Only for debug: console.log(Lit);

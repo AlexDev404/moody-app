@@ -28,8 +28,7 @@ window.addEventListener("popstate", async () => {
       if (newContent) {
         LifecycleManager.cleanupAll(); // Clear all intervals if needed
         // Update the #content on the current page
-        const contentContainer = document.getElementById("content");
-        contentContainer.innerHTML = newContent.innerHTML;
+        App.innerHTML = newContent.innerHTML;
 
         // Re-run any <script> tags within the new content
         const scripts = newContent.querySelectorAll("script");
