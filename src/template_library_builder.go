@@ -16,7 +16,7 @@ func getTemplates() (*template.Template, error) {
 		return nil, err
 	}
 	log.Println("Parsing 'partial' templates...")
-	templates, err = templates.ParseGlob("templates/partials/*.tmpl")
+	templates, err = templates.ParseGlob("templates/partials/**/*.tmpl")
 	if err != nil {
 		return nil, err
 	}
