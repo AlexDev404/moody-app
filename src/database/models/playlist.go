@@ -8,6 +8,7 @@ import (
 
 type Playlist struct {
 	ID        string    `json:"id"`
+	MoodID    string    `json:"mood_id"`
 	Name      string    `json:"name"`
 	CreatedAt time.Time `json:"created_at"`
 	Tracks    []Track   `json:"tracks"`
@@ -17,7 +18,7 @@ type PlaylistModel struct {
 	Database *sql.DB
 }
 
-func (p *PlaylistModel) Insert(playlist *Playlist, moodID string) error {
+func (p *PlaylistModel) Insert(playlist *Playlist) error {
 	query := `
 		INSERT INTO playlists (name, mood_id)
 		VALUES ($1, $2)
@@ -30,7 +31,7 @@ func (p *PlaylistModel) Insert(playlist *Playlist, moodID string) error {
 		ctx,
 		query,
 		playlist.Name,
-		moodID,
+		playlist.MoodID,
 	).Scan(&playlist.ID, &playlist.CreatedAt)
 }
 

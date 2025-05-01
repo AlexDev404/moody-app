@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"baby-blog/database/models"
 	"baby-blog/forms"
 	"baby-blog/forms/validator"
 	"baby-blog/types"
@@ -50,47 +51,121 @@ func MoodForm(pageData map[string]interface{}, db *types.Models, r *http.Request
 		return pageData
 	}
 
-	response, error := SubmitToAI(moodEntry.MoodText)
-	response = strings.Map(func(r rune) rune {
-		if r == '\u00A0' || r == '\uFEFF' {
-			return ' ' // Replace with regular space
-		}
-		return r
-	}, response)
-	print(response)
-	if error != nil {
-		log.Println("Failed to submit to AI", "error", error)
-		http.Error(w, forms.FormHandlerBadRequestMessage, http.StatusBadRequest)
-		pageData["Failure"] = "✗ Failed to submit playlist request. Please try again later."
-		return pageData
-	}
-	// Parse the response JSON into a map
-	var responseMap map[string]any
-	// Unmarshal the response directly
-	err = json.Unmarshal([]byte(response), &responseMap)
+	existingPlaylist, err := db.Playlists.GetForMood(moodEntry.ID)
+	// First check to see if a playlist for the mood_id already exists
 	if err != nil {
-		log.Println("Failed to unmarshal JSON", "error", err)
-		http.Error(w, forms.FormHandlerBadRequestMessage, http.StatusBadRequest)
-
-		pageData["Failure"] = "✗ Failed to submit playlist request. Please try again later."
+		log.Println("Failed to get existing playlist.", "error", err)
 		return pageData
 	}
-	// Debug print the entire responseMap
-	// log.Printf("Response map: %+v", responseMap)
-
-	// Access the playlist from the response
-
-	// Try accessing through parameters if it exists
-	if parameters, paramsExist := responseMap["parameters"].(map[string]interface{}); paramsExist {
-		playlist, ok := parameters["playlist"]
-		if !ok {
-			log.Println("Playlist not found in parameters")
+	if existingPlaylist == nil {
+		response, error := SubmitToAI(moodEntry.MoodText)
+		response = strings.Map(func(r rune) rune {
+			if r == '\u00A0' || r == '\uFEFF' {
+				return ' ' // Replace with regular space
+			}
+			return r
+		}, response)
+		print(response)
+		if error != nil {
+			log.Println("Failed to submit to AI", "error", error)
+			http.Error(w, forms.FormHandlerBadRequestMessage, http.StatusBadRequest)
 			pageData["Failure"] = "✗ Failed to submit playlist request. Please try again later."
 			return pageData
 		}
-		pageData["Playlist"] = playlist
+		// Parse the response JSON into a map
+		var responseMap map[string]any
+		// Unmarshal the response directly
+		err = json.Unmarshal([]byte(response), &responseMap)
+		if err != nil {
+			log.Println("Failed to unmarshal JSON", "error", err)
+			http.Error(w, forms.FormHandlerBadRequestMessage, http.StatusBadRequest)
+
+			pageData["Failure"] = "✗ Failed to submit playlist request. Please try again later."
+			return pageData
+		}
+		// Debug print the entire responseMap
+		// log.Printf("Response map: %+v", responseMap)
+
+		// Access the playlist from the response
+
+		// Try accessing through parameters if it exists
+		if parameters, paramsExist := responseMap["parameters"].(map[string]interface{}); paramsExist {
+			playlist, ok := parameters["playlist"]
+			if !ok {
+				log.Println("Playlist not found in parameters")
+				pageData["Failure"] = "✗ Failed to submit playlist request. Please try again later."
+				return pageData
+			}
+			// Insert the playlist into the database
+			log.Println("Failed to get existing playlist. Creating a new one.", "error", err)
+			newPlaylist := &models.Playlist{
+				MoodID: moodEntry.ID,
+				Name:   moodEntry.MoodText,
+			}
+
+			err = db.Playlists.Insert(newPlaylist)
+			if err != nil {
+				log.Println("Failed to insert new playlist", "error", err)
+				http.Error(w, forms.FormHandlerBadRequestMessage, http.StatusBadRequest)
+				pageData["Failure"] = "✗ Failed to submit playlist request. Please try again later."
+				return pageData
+			}
+
+			// Insert the tracks into the database
+			playlistItems, ok := playlist.([]interface{})
+			if !ok {
+				log.Println("Playlist is not an array")
+				pageData["Failure"] = "✗ Failed to submit playlist request. Please try again later."
+				return pageData
+			}
+
+			// Iterate over the tracks and insert them into the database
+			for _, item := range playlistItems {
+				trackData, ok := item.(map[string]interface{})
+				if !ok {
+					log.Println("Track data is not a map")
+					pageData["Failure"] = "✗ Failed to submit playlist request. Please try again later."
+					return pageData
+				}
+				track := &models.Track{
+					PlaylistID: newPlaylist.ID,
+					Artist:     trackData["artist"].(string),
+					Title:      trackData["title"].(string),
+					YouTubeURL: "",
+				}
+				err = db.Tracks.Insert(track)
+				if err != nil {
+					log.Println("Failed to insert track", "error", err)
+					http.Error(w, forms.FormHandlerBadRequestMessage, http.StatusBadRequest)
+					pageData["Failure"] = "✗ Failed to submit playlist request. Please try again later."
+					return pageData
+				}
+				pageData["Playlist"] = playlist
+			}
+		}
+
 	} else {
-		log.Println("Parameters not found or not a map in response")
+		// If a playlist already exists, just return it
+		tracks, err := db.Tracks.GetAllForPlaylist(existingPlaylist.ID)
+		if err != nil {
+			log.Println("Failed to get tracks for existing playlist", "error", err)
+			http.Error(w, forms.FormHandlerBadRequestMessage, http.StatusBadRequest)
+			pageData["Failure"] = "✗ Failed to submit playlist request. Please try again later."
+			return pageData
+		}
+		// Convert the tracks to a slice of maps
+		var trackList []map[string]interface{}
+		for _, track := range tracks {
+			trackList = append(trackList, map[string]interface{}{
+				"artist":    track.Artist,
+				"title":     track.Title,
+				"mood_tags": []string{},
+				"reason":    "",
+			})
+		}
+		pageData["Playlist"] = trackList
+		pageData["Message"] = "✓ Playlist request submitted successfully!"
+		return pageData
 	}
 
 	pageData["Message"] = "✓ Playlist request submitted successfully!"

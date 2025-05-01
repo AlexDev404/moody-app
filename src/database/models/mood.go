@@ -175,3 +175,111 @@ func (m *MoodModel) GetByID(id string) (*MoodEntry, error) {
 	}
 	return entry, err
 }
+
+func (m *MoodModel) GetAllWithPlaylist() ([]MoodEntry, error) {
+	query := `
+		SELECT me.id, me.created_at, me.mood_text,
+			   p.id, p.name, p.created_at,
+			   t.id, t.artist, t.title, t.youtube_url
+		FROM mood_entries me
+		LEFT JOIN playlists p ON p.mood_id = me.id
+		LEFT JOIN tracks t ON t.playlist_id = p.id
+		ORDER BY me.created_at DESC`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.Database.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	entriesMap := make(map[string]*MoodEntry)
+	playlistsMap := make(map[string]*Playlist)
+
+	for rows.Next() {
+		var moodID string
+		var playlistID, playlistName sql.NullString
+		var playlistCreatedAt sql.NullTime
+		var trackID, trackArtist, trackTitle, trackURL sql.NullString
+		var moodText string
+		var moodCreatedAt time.Time
+
+		err := rows.Scan(
+			&moodID,
+			&moodCreatedAt,
+			&moodText,
+			&playlistID,
+			&playlistName,
+			&playlistCreatedAt,
+			&trackID,
+			&trackArtist,
+			&trackTitle,
+			&trackURL,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		// Get or create mood entry
+		entry, exists := entriesMap[moodID]
+		if !exists {
+			entry = &MoodEntry{
+				ID:        moodID,
+				CreatedAt: moodCreatedAt,
+				MoodText:  moodText,
+			}
+			entriesMap[moodID] = entry
+		}
+
+		// If there's a playlist for this mood
+		if playlistID.Valid && playlistName.Valid {
+			// Get or create playlist
+			playlist, exists := playlistsMap[playlistID.String]
+			if !exists {
+				playlist = &Playlist{
+					ID:        playlistID.String,
+					Name:      playlistName.String,
+					CreatedAt: playlistCreatedAt.Time,
+					Tracks:    []Track{},
+				}
+				playlistsMap[playlistID.String] = playlist
+				entry.Playlist = playlist
+			}
+
+			// If there's a track for this playlist
+			if trackID.Valid {
+				track := Track{
+					ID:         trackID.String,
+					Artist:     trackArtist.String,
+					Title:      trackTitle.String,
+					YouTubeURL: trackURL.String,
+				}
+				// Avoid duplicate tracks
+				trackExists := false
+				for _, existingTrack := range playlist.Tracks {
+					if existingTrack.ID == track.ID {
+						trackExists = true
+						break
+					}
+				}
+				if !trackExists {
+					playlist.Tracks = append(playlist.Tracks, track)
+				}
+			}
+		}
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	// Convert map to slice
+	var entries []MoodEntry
+	for _, entry := range entriesMap {
+		entries = append(entries, *entry)
+	}
+
+	return entries, nil
+}

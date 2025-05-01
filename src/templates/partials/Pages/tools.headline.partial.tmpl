@@ -1,5 +1,6 @@
 {{ define "partial/tools/headline"}}
 {{ range .Data.PageData.moods }}
+{{ . }}
 <action-center>
 	<headline class="flex py-16 justify-center items-center">
 		<h1 class="uk-h1 playfair">Your Mood: "{{ .MoodText }}"</h1>

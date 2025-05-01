@@ -8,6 +8,7 @@ import (
 
 type Track struct {
 	ID         string `json:"id"`
+	PlaylistID string `json:"playlist_id"`
 	Artist     string `json:"artist"`
 	Title      string `json:"title"`
 	YouTubeURL string `json:"youtube_url"`
@@ -17,7 +18,7 @@ type TrackModel struct {
 	Database *sql.DB
 }
 
-func (t *TrackModel) Insert(track *Track, playlistID string) error {
+func (t *TrackModel) Insert(track *Track) error {
 	query := `
 		INSERT INTO tracks (artist, title, youtube_url, playlist_id)
 		VALUES ($1, $2, $3, $4)
@@ -32,7 +33,7 @@ func (t *TrackModel) Insert(track *Track, playlistID string) error {
 		track.Artist,
 		track.Title,
 		track.YouTubeURL,
-		playlistID,
+		track.PlaylistID,
 	).Scan(&track.ID)
 }
 
