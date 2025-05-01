@@ -17,8 +17,9 @@
     <section class="flex flex-col pt-20 pb-64 justify-center items-center gap-12 self-stretch flex-1">
         <!-- Content -->
         <section class="flex flex-col py-2 px-20 justify-center items-center gap-32 self-stretch flex-1">
-            <headline class="flex py-16 justify-center items-center">
+            <headline class="flex flex-col gap-20 py-16 justify-center items-center">
                 <h1 class="uk-h1 playfair">{{/* .Data.PageData.Playlist */}}Your Playlist</h1>
+                {{ template "partial/ux/music_player" . }}
             </headline>
         <ux-past-playlists-body class="flex flex-col items-start gap-8 self-stretch">
          {{ range .Data.PageData.Playlist }}

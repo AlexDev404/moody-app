@@ -58,7 +58,9 @@
          setTimeout(() => {
             window.pipedPlayer = new Piped();
             if (pipedPlayer) {
-               console.infos("Piped API has been made available.");
+               window.AudioPlayer = new AudioPlayer();
+               window.AudioPlayer?.init();
+               console.info("Piped API has been made available.");
             } else {
                console.error("Piped API is still not available. Abort.");
             }

@@ -4,12 +4,27 @@ export class Piped {
     this.playerId = "piped-audio";
     this.playerElement = null;
     this.playerInstance = null;
+    this.volume = 1.0; // Default volume
   }
 
   init() {
     this.playerElement = document.getElementById(this.playerId);
     if (!this.playerElement) {
       console.error(`Player element with ID ${this.playerId} not found.`);
+    }
+    this.playerElement.volume = this.volume; // Set initial volume
+    this.playerElement.addEventListener("ended", () => {
+      this.audio.currentTime = 0; // Reset current time to 0 when audio ends
+    });
+  }
+
+  // Setter for volume
+  setVolume(volume) {
+    if (this.playerElement) {
+      this.volume = volume;
+      this.playerElement.volume = volume;
+    } else {
+      console.error("Player element not initialized.");
     }
   }
 

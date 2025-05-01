@@ -97,14 +97,14 @@ run: build-web copy-wasm
 ifeq ($(BUILD_PLATFORM),LINUX)
 # WSL detection
 ifeq ($(WSL_CHECK),true)
-	cd $(SRC_DIR) && npm run dev -- . --dsn ${DB_DSN} --open-ai-key ${OPENAI_API_KEY}
+	cd $(SRC_DIR) && npm run dev -- . --dsn ${DB_DSN} --openai-key ${OPENAI_API_KEY}
 else
-	cd $(SRC_DIR) && npm run gow -- . --dsn ${DB_DSN} --open-ai-key ${OPENAI_API_KEY}
+	cd $(SRC_DIR) && npm run gow -- . --dsn ${DB_DSN} --openai-key ${OPENAI_API_KEY}
 endif
 
 else
 ifeq ($(BUILD_PLATFORM),WIN32)
-	cd $(SRC_DIR) && go run . --open-ai-key ${OPENAI_API_KEY} --dsn ${DB_DSN}
+	cd $(SRC_DIR) && go run . --openai-key ${OPENAI_API_KEY} --dsn ${DB_DSN}
 endif
 endif
 

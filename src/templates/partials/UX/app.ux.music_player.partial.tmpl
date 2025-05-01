@@ -1,0 +1,45 @@
+{{ define "partial/ux/music_player" }}
+<script>
+    document.addEventListener("uk-input-range:input", (e)=>pipedPlayer.setVolume(e.detail.value / 100));
+</script>
+<div class="bg-card text-card-foreground overflow-hidden rounded-lg border shadow-sm w-full" data-v0-t="card">
+    <div class="p-4">
+        <div class="flex flex-col space-y-4">
+            <div class="flex items-center space-x-4">
+                <div class="bg-muted h-20 w-20 overflow-hidden rounded-md">
+                    <img
+                        alt="Placeholder photo"
+                        class="h-full size-20 object-cover rounded-md overflow-clip"
+                        src="/static/photos/placeholder.svg"
+                    />
+                </div>
+                <div class="flex-1 space-y-1 overflow-hidden">
+                    <h3 class="truncate text-lg font-semibold">Start by playing something</h3>
+                    <p class="text-muted-foreground truncate text-sm">Click below for a track</p>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <progress class="uk-progress" value="20" max="100"></progress>
+                <div class="text-muted-foreground flex justify-between text-xs">
+                    <span id="currentTime">00:00</span>
+                    <span id="totalTime">00:00</span>
+                </div>
+            </div>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <button class="uk-btn uk-btn-default">RR</button>
+                    <button class="uk-btn uk-btn-default">P</button>
+                    <button class="uk-btn uk-btn-default">FF</button>
+                </div>
+                <div class="flex items-center space-x-2 md:space-x-3">
+                    <button class="uk-btn uk-btn-default">SS</button>
+                    <div class="w-20 md:w-28">
+                        <uk-input-range id="audio_vol"></uk-input-range>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--- <audio src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" preload="metadata"></audio> --->
+    </div>
+</div>
+{{ end }}
