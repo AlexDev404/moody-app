@@ -27,12 +27,20 @@
             </div>
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                    <button class="uk-btn uk-btn-default" onclick="AudioPlayer.RR()">RR</button>
-                    <button class="uk-btn uk-btn-default" onclick="AudioPlayer.togglePlay()">P</button>
-                    <button class="uk-btn uk-btn-default" onclick="AudioPlayer.FF()">FF</button>
+                    <button class="uk-btn uk-btn-default" onclick="AudioPlayer.RR()">
+                        <ux-icon color="#FAFAFA" data-lucide="undo-dot" class="size-5" stroke-width="2px"></ux-icon>
+                    </button>
+                    <button class="uk-btn uk-btn-default" onclick="AudioPlayer.togglePlay()">
+                        <ux-icon color="#7DFCBC" data-lucide="play" class="size-5" stroke-width="2px"></ux-icon>
+                    </button>
+                    <button class="uk-btn uk-btn-default" onclick="AudioPlayer.FF()">
+                        <ux-icon color="#FAFAFA" data-lucide="redo-dot" class="size-5" stroke-width="2px"></ux-icon>
+                    </button>
                 </div>
                 <div class="flex items-center space-x-2 md:space-x-3">
-                    <button class="uk-btn uk-btn-default" onclick="AudioPlayer.toggleMute()">SS</button>
+                    <button class="uk-btn uk-btn-default" onclick="AudioPlayer.toggleMute()">
+                         <ux-icon color="#7DFCBC" data-lucide="audio-lines" class="size-5" stroke-width="2px"></ux-icon>
+                    </button>
                     <div class="w-20 md:w-28">
                         <uk-input-range id="audio_vol" value="100"></uk-input-range>
                     </div>

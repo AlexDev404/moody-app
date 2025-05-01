@@ -10,13 +10,13 @@ import (
 )
 
 func getTemplates() (*template.Template, error) {
-	log.Println("Parsing 'initial' templates...")
+	log.Println("Parsing 'base' templates...")
 	templates, err := template.ParseGlob("templates/*.tmpl")
 	if err != nil {
 		return nil, err
 	}
 	log.Println("Parsing 'partial' templates...")
-	templates, err = templates.ParseGlob("templates/partials/**/*.tmpl")
+	templates, err = templates.Funcs(funcMap).ParseGlob("templates/partials/**/*.tmpl")
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func getTemplates() (*template.Template, error) {
 		}
 		if !info.IsDir() && strings.HasSuffix(path, ".tmpl") {
 			var tmpl *template.Template
-			tmpl, err = templates.ParseFiles(path)
+			tmpl, err = templates.Funcs(funcMap).ParseFiles(path)
 			if err != nil {
 				return err
 			}
