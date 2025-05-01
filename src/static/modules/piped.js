@@ -1,10 +1,18 @@
 export class Piped {
   constructor() {
-    this.apiUrl = "https://pipedapi.ducks.party";
+    // this.apiUrl = "https://pipedapi.ducks.party";
+    this.apiUrl = "https://pipedapi.wireway.ch";
     this.playerId = "piped-audio";
     this.playerElement = null;
     this.playerInstance = null;
     this.volume = 1.0; // Default volume
+    // Player states
+    this.STATE = {
+      STOPPED: 'STOPPED',
+      PLAYING: 'PLAYING',
+      PAUSED: 'PAUSED'
+    };
+    this.state = this.STATE.STOPPED; // Default state
   }
 
   init() {
@@ -41,10 +49,12 @@ export class Piped {
     });
 
     this.playerInstance.play();
+    this.state = this.STATE.PLAYING; // Update state to PLAYING
   }
   pause() {
     if (this.playerInstance) {
       this.playerInstance.pause();
+      this.state = this.STATE.PAUSED; // Update state to PAUSED
     } else {
       console.error("Player instance not initialized.");
     }
@@ -52,6 +62,7 @@ export class Piped {
   stop() {
     if (this.playerInstance) {
       this.playerInstance.stop();
+      this.state = this.STATE.STOPPED; // Update state to STOPPED
     } else {
       console.error("Player instance not initialized.");
     }
@@ -59,6 +70,7 @@ export class Piped {
   resume() {
     if (this.playerInstance) {
       this.playerInstance.resume();
+      this.state = this.STATE.PLAYING; // Update state to PLAYING
     } else {
       console.error("Player instance not initialized.");
     }

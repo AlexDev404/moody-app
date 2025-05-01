@@ -19,7 +19,7 @@
                 </div>
             </div>
             <div class="space-y-2">
-                <progress class="uk-progress" value="20" max="100"></progress>
+                <progress class="uk-progress" id="audio_progress" value="0" max="100"></progress>
                 <div class="text-muted-foreground flex justify-between text-xs">
                     <span id="currentTime">00:00</span>
                     <span id="totalTime">00:00</span>
@@ -27,14 +27,14 @@
             </div>
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                    <button class="uk-btn uk-btn-default">RR</button>
-                    <button class="uk-btn uk-btn-default">P</button>
-                    <button class="uk-btn uk-btn-default">FF</button>
+                    <button class="uk-btn uk-btn-default" onclick="AudioPlayer.RR()">RR</button>
+                    <button class="uk-btn uk-btn-default" onclick="AudioPlayer.togglePlay()">P</button>
+                    <button class="uk-btn uk-btn-default" onclick="AudioPlayer.FF()">FF</button>
                 </div>
                 <div class="flex items-center space-x-2 md:space-x-3">
-                    <button class="uk-btn uk-btn-default">SS</button>
+                    <button class="uk-btn uk-btn-default" onclick="AudioPlayer.toggleMute()">SS</button>
                     <div class="w-20 md:w-28">
-                        <uk-input-range id="audio_vol"></uk-input-range>
+                        <uk-input-range id="audio_vol" value="100"></uk-input-range>
                     </div>
                 </div>
             </div>
