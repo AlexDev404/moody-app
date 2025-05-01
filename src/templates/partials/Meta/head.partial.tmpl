@@ -42,9 +42,29 @@
 		 go_setpath("{{ .Data.Path }}"); // Should be replaced with the actual path after execution
 	  });
    </script>
-
    <!-- Experimental: Using Popstate API for SPA navigation -->
    <script src="/static/lifecycle/patches.js"></script>
    <script src="/static/lifecycle/lifecycle.js" type="module"></script>
+
+   <!-- Piped API and other things  -->
+   <script src="/static/modules/index.js" type="module"></script>
+   <script>
+      if(window.Piped) {
+         console.log("Piped API is available.");
+         window.pipedPlayer = new Piped();
+         pipedPlayer?.init();
+      } else {
+         console.error("Piped API is not available. Trying again in 5 seconds.");
+         setTimeout(() => {
+            window.pipedPlayer = new Piped();
+            if (pipedPlayer) {
+               console.infos("Piped API has been made available.");
+            } else {
+               console.error("Piped API is still not available. Abort.");
+            }
+            pipedPlayer?.init();
+         }, 5000);
+      }
+   </script>
 </head>
 {{end}}

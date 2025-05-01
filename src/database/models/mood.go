@@ -154,3 +154,24 @@ func (m *MoodModel) GetAll() ([]MoodEntry, error) {
 	}
 	return entries, nil
 }
+
+func (m *MoodModel) GetByID(id string) (*MoodEntry, error) {
+	query := `
+		SELECT id, created_at, mood_text
+		FROM mood_entries
+		WHERE id = $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	entry := &MoodEntry{}
+	err := m.Database.QueryRowContext(ctx, query, id).Scan(
+		&entry.ID,
+		&entry.CreatedAt,
+		&entry.MoodText,
+	)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	return entry, err
+}

@@ -6693,6 +6693,10 @@ th.uk-text-break, td.uk-text-break {
   gap: 0.75rem;
 }
 
+.gap-32 {
+  gap: 8rem;
+}
+
 .gap-4 {
   gap: 1rem;
 }
@@ -6701,16 +6705,12 @@ th.uk-text-break, td.uk-text-break {
   gap: 1.25rem;
 }
 
-.gap-8 {
-  gap: 2rem;
-}
-
 .gap-6 {
   gap: 1.5rem;
 }
 
-.gap-32 {
-  gap: 8rem;
+.gap-8 {
+  gap: 2rem;
 }
 
 .space-y-6 > :not([hidden]) ~ :not([hidden]) {
@@ -6792,6 +6792,10 @@ th.uk-text-break, td.uk-text-break {
   background-image: var(--primary-glow);
 }
 
+.p-1 {
+  padding: 0.25rem;
+}
+
 .p-10 {
   padding: 2.5rem;
 }
@@ -6806,10 +6810,6 @@ th.uk-text-break, td.uk-text-break {
 
 .p-6 {
   padding: 1.5rem;
-}
-
-.p-1 {
-  padding: 0.25rem;
 }
 
 .px-2 {
@@ -6852,26 +6852,12 @@ th.uk-text-break, td.uk-text-break {
   padding-bottom: 1rem;
 }
 
-.py-20 {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
-}
-
-.py-64 {
-  padding-top: 16rem;
+.pb-64 {
   padding-bottom: 16rem;
-}
-
-.pt-8 {
-  padding-top: 2rem;
 }
 
 .pt-20 {
   padding-top: 5rem;
-}
-
-.pb-64 {
-  padding-bottom: 16rem;
 }
 
 .text-center {
@@ -6925,6 +6911,11 @@ th.uk-text-break, td.uk-text-break {
   color: rgb(59 130 246 / var(--tw-text-opacity, 1));
 }
 
+.text-emerald-500 {
+  --tw-text-opacity: 1;
+  color: rgb(16 185 129 / var(--tw-text-opacity, 1));
+}
+
 .text-gray-500 {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity, 1));
@@ -6962,11 +6953,6 @@ th.uk-text-break, td.uk-text-break {
 .text-zinc-900 {
   --tw-text-opacity: 1;
   color: rgb(24 24 27 / var(--tw-text-opacity, 1));
-}
-
-.text-emerald-500 {
-  --tw-text-opacity: 1;
-  color: rgb(16 185 129 / var(--tw-text-opacity, 1));
 }
 
 .opacity-50 {

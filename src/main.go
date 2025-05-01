@@ -31,8 +31,14 @@ func (app *Application) runHooks(pageData map[string]interface{}, r *http.Reques
 func (app *Application) startup() {
 	addr := flag.String("addr", "4000", "HTTP network address")
 	dsn := flag.String("dsn", "postgresql://postgres:postgres@localhost:5432/moody?sslmode=disable", "PostgreSQL DSN")
+	openaiKey := flag.String("openai-key", "", "OpenAI API key")
 	flag.Parse()
 
+	if *openaiKey == "" {
+		log.Fatal("OpenAI API key is required. Please pass the OPENAI_API_KEY flag.")
+	}
+
+	os.Setenv("OPENAI_API_KEY", *openaiKey)
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	templates, tErr := getTemplates()
 	if tErr != nil {

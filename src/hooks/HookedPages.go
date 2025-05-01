@@ -10,4 +10,5 @@ import (
 var hookedPages = map[string]func(pageData map[string]interface{}, db *types.Models, r *http.Request, w http.ResponseWriter) map[string]interface{}{
 	"index": pages.Home,
 	"tools": pages.Tools,
+	"mood":  pages.Mood,
 }
