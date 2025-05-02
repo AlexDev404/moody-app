@@ -6,7 +6,7 @@ export class AudioPlayer {
     this.playbackRate = 1; // Set default playback rate to 1
     this.currentTime = 0; // Set default current time to 0
     // this.audio.src = ''; // Set default source to empty
-    this.uiElement = "piped-audio"; // Set default UI element to null
+    this.uiElement = "piped:audio"; // Set default UI element to null
     this.ui_CurrentTime = "currentTime"; // Set default UI current time to null
     this.ui_TotalTime = "totalTime"; // Set default UI current time to null
     this.ui_ProgressBar = "audio_progress"; // Set default UI progress to null
@@ -48,12 +48,10 @@ export class AudioPlayer {
   }
 
   togglePlay() {
-    if (this.uiElement.state === "PAUSED") {
-      this.uiElement.play();
-      this.uiElement.state = "PLAYING";
+    if (window.pipedPlayer.state === "PAUSED") {
+      window.pipedPlayer.resume();
     } else {
-      this.uiElement.pause();
-      this.uiElement.state = "PAUSED";
+      window.pipedPlayer.pause();
     }
   }
 

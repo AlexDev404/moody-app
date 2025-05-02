@@ -1,31 +1,52 @@
 export class Piped {
   constructor() {
-    this.apiUrl = "https://pipedapi.wireway.ch";
-    // this.apiUrl = "https://pipedapi.ducks.party";
+    // this.apiUrl = "https://pipedapi.wireway.ch";
+    this.apiUrl = "https://pipedapi.ducks.party";
     // this.apiUrl = "https://pipedapi.kavin.rocks";
-    this.playerId = "piped-audio";
+    this.playerId = "piped:audio";
     this.playerElement = null;
     this.playerInstance = null;
     this.volume = 1.0; // Default volume
+    this.spinner = "piped:spinner";
+    this.loadingSpinner = document.createElement("div");
+    this.loadingSpinner.setAttribute("data-uk-spinner", "");
     // Player states
     this.STATE = {
-      STOPPED: 'STOPPED',
-      PLAYING: 'PLAYING',
-      PAUSED: 'PAUSED'
+      LOADING: "LOADING",
+      ERROR: "ERROR",
+      STOPPED: "STOPPED",
+      PLAYING: "PLAYING",
+      PAUSED: "PAUSED",
     };
     this.state = this.STATE.STOPPED; // Default state
   }
 
   init() {
     this.playerElement = document.getElementById(this.playerId);
-    if (!this.playerElement) {
-      console.error(`Player element with ID ${this.playerId} not found.`);
+    this.spinner = document.getElementById(this.spinner);
+    if (!this.playerElement || !this.spinner) {
+      console.error(
+        `Player element with ID ${this.playerId} or spinner not found.`
+      );
     }
     this.playerElement.volume = this.volume; // Set initial volume
     this.playerElement.addEventListener("ended", () => {
       this.audio.currentTime = 0; // Reset current time to 0 when audio ends
     });
+
+    // Create new player instance and remove spinner when ready
+    document.addEventListener("piped:playerStateChange", (e) => {
+      this.updateState(e.detail.state);
+    });
   }
+
+  removeSpinner = () => {
+    if (this.spinner.contains(this.loadingSpinner)) {
+      this.spinner.removeChild(this.loadingSpinner);
+    } else {
+      console.warn("piped:spinner not found in the spinner element.");
+    }
+  };
 
   // Setter for volume
   setVolume(volume) {
@@ -37,11 +58,59 @@ export class Piped {
     }
   }
 
+  updateState(newState) {
+    if (!Object.values(this.STATE).includes(newState)) {
+      console.error(`Invalid state: ${newState}`);
+      return;
+    }
+    if (this.state === newState) {
+      console.warn(`State is already ${newState}. No update needed.`);
+      return;
+    }
+    console.log(`Player state updated from ${this.state} to ${newState}`);
+    if (newState === this.STATE.LOADING) {
+      this.spinner.appendChild(this.loadingSpinner);
+    }
+    if (newState === this.STATE.PLAYING) {
+      this.removeSpinner();
+    }
+    if (newState === this.STATE.ERROR) {
+      this.removeSpinner();
+      console.error("Error occurred while playing the video.");
+    }
+    document.dispatchEvent(
+      new CustomEvent("piped:playerStateChange", {
+        detail: { state: newState },
+      })
+    );
+    this.state = newState;
+  }
+
   play(searchQuery) {
     if (!this.playerElement) {
       console.error("Player element not initialized.");
       return;
     }
+
+    // Show loading state and spinner
+    this.updateState(this.STATE.LOADING);
+
+    // Clean up any previous player instance
+    if (this.playerInstance) {
+      this.playerInstance.stop();
+    }
+
+    this.playerElement.onwaiting = () => {
+      this.updateState(this.STATE.LOADING);
+    };
+
+    this.playerElement.onloadeddata = () => {
+      document.dispatchEvent(
+        new CustomEvent("piped:playerStateChange", {
+          detail: { state: "PLAYING" },
+        })
+      );
+    };
 
     this.playerInstance = new PipedPlayer(this.playerElement, {
       autoplay: true,
@@ -50,12 +119,12 @@ export class Piped {
     });
 
     this.playerInstance.play();
-    this.state = this.STATE.PLAYING; // Update state to PLAYING
+    this.updateState(this.STATE.PLAYING); // Update state to PLAYING
   }
   pause() {
     if (this.playerInstance) {
       this.playerInstance.pause();
-      this.state = this.STATE.PAUSED; // Update state to PAUSED
+      this.updateState(this.STATE.PAUSED); // Update state to PAUSED
     } else {
       console.error("Player instance not initialized.");
     }
@@ -63,7 +132,7 @@ export class Piped {
   stop() {
     if (this.playerInstance) {
       this.playerInstance.stop();
-      this.state = this.STATE.STOPPED; // Update state to STOPPED
+      this.updateState(this.STATE.STOPPED); // Update state to STOPPED
     } else {
       console.error("Player instance not initialized.");
     }
@@ -71,7 +140,7 @@ export class Piped {
   resume() {
     if (this.playerInstance) {
       this.playerInstance.resume();
-      this.state = this.STATE.PLAYING; // Update state to PLAYING
+      this.updateState(this.STATE.PLAYING); // Update state to PLAYING
     } else {
       console.error("Player instance not initialized.");
     }
@@ -112,6 +181,8 @@ export class PipedPlayer {
           if (streamUrl) {
             this.element.src = streamUrl;
             this.element.play();
+          } else {
+            console.error("No suitable audio stream found.");
           }
         } else {
           console.error("No videos found for the search query.");
@@ -137,6 +208,8 @@ export class PipedPlayer {
     if (this.element) {
       this.element.pause();
       this.element.currentTime = 0;
+      // Destroy the player instance
+      this.element.src = ""; // Clear the source
     } else {
       console.error("Player element not initialized.");
     }
