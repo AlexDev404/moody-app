@@ -31,13 +31,16 @@ export class Piped {
     }
     this.playerElement.volume = this.volume; // Set initial volume
     this.playerElement.addEventListener("ended", () => {
-      this.audio.currentTime = 0; // Reset current time to 0 when audio ends
+      this.updateState(this.STATE.STOPPED); // Update state to STOPPED when video ends
     });
 
-    // Create new player instance and remove spinner when ready
-    document.addEventListener("piped:playerStateChange", (e) => {
-      this.updateState(e.detail.state);
-    });
+    if (!window._playerStateChangeListener) {
+      // Create new player instance and remove spinner when ready
+      document.addEventListener("piped:playerStateChange", (e) => {
+        pipedPlayer?.updateState(e.detail.state);
+      });
+      window._playerStateChangeListener = true; // Set flag to prevent multiple listeners
+    }
   }
 
   removeSpinner = () => {
@@ -77,6 +80,9 @@ export class Piped {
     if (newState === this.STATE.ERROR) {
       this.removeSpinner();
       console.error("Error occurred while playing the video.");
+    }
+    if (newState === this.STATE.STOPPED) {
+      this.stop();
     }
     document.dispatchEvent(
       new CustomEvent("piped:playerStateChange", {

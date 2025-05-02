@@ -184,7 +184,7 @@ func (m *MoodModel) GetAllWithPlaylist() ([]MoodEntry, error) {
 		FROM mood_entries me
 		LEFT JOIN playlists p ON p.mood_id = me.id
 		LEFT JOIN tracks t ON t.playlist_id = p.id
-		ORDER BY me.created_at DESC`
+		ORDER BY me.created_at ASC`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
