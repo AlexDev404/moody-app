@@ -1,12 +1,12 @@
 {{define "header"}}
     <audio id="piped:audio" class="hidden" controls preload="auto" ontimeupdate="AudioPlayer.updateTime()"></audio>
     
-    <header class="mb-6">
+    <!--- header class="mb-6">
         <nav class="flex items-center justify-between py-4">
             <div>
                 <a href="/" class="text-xl font-bold">Moody App</a>
             </div>
-            
+        
             <div class="flex items-center space-x-4">
                 {{if .Data.PageData.IsAuthenticated}}
                     <span class="text-sm">{{.Data.PageData.User.Email}}</span>
@@ -17,5 +17,5 @@
                 {{end}}
             </div>
         </nav>
-    </header>
+    </header ---->
 {{end}}
