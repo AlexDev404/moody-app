@@ -13,7 +13,7 @@ import (
 func Home(pageData map[string]interface{}, db *types.Models, r *http.Request, w http.ResponseWriter) map[string]interface{} {
 	// Get user ID from context
 	userID := middleware.GetUserID(r)
-	
+
 	// If authenticated, show user-specific data
 	if userID != "" {
 		// Get user's mood entries
@@ -42,7 +42,7 @@ func Home(pageData map[string]interface{}, db *types.Models, r *http.Request, w 
 			pageData["Failure"] = "You must be logged in to submit a mood."
 			return pageData
 		}
-		
+
 		if err := r.ParseForm(); err != nil {
 			log.Println(forms.FormHandlerErrorMessage, "error", err)
 			http.Error(w, forms.FormHandlerBadRequestMessage, http.StatusBadRequest)
@@ -76,7 +76,7 @@ func HomeForm(pageData map[string]interface{}, db *types.Models, r *http.Request
 		MoodText: mood,
 		UserID:   userID, // Associate the mood with the current user
 	}
-	
+
 	if err := db.Moods.Insert(newMood); err != nil {
 		log.Println(forms.FormHandlerErrorMessage, "error", err)
 		http.Error(w, forms.FormHandlerBadRequestMessage, http.StatusBadRequest)

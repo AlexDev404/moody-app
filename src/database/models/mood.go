@@ -324,11 +324,11 @@ func (m *MoodModel) GetAllForUser(userID string) ([]MoodEntry, error) {
 		}
 		entries = append(entries, entry)
 	}
-	
+
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
-	
+
 	return entries, nil
 }
 

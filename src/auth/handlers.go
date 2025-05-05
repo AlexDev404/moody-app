@@ -36,7 +36,7 @@ func (h *AuthHandlers) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		// Extract the email and password from the form
 		email := r.PostForm.Get("email")
 		password := r.PostForm.Get("password")
-		
+
 		// Get the "next" parameter if it exists
 		next := r.URL.Query().Get("next")
 		if next == "" {
@@ -48,13 +48,13 @@ func (h *AuthHandlers) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			// Render the login page with an error message
 			data := struct {
-				Error    string
-				Email    string
-				NextURL  string
+				Error   string
+				Email   string
+				NextURL string
 			}{
-				Error:    "Invalid email or password",
-				Email:    email,
-				NextURL:  next,
+				Error:   "Invalid email or password",
+				Email:   email,
+				NextURL: next,
 			}
 			h.Templates.ExecuteTemplate(w, "login.tmpl", data)
 			return
@@ -85,9 +85,9 @@ func (h *AuthHandlers) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// For GET requests, render the login page
 	next := r.URL.Query().Get("next")
 	data := struct {
-		Error    string
-		Email    string
-		NextURL  string
+		Error   string
+		Email   string
+		NextURL string
 	}{
 		NextURL: next,
 	}
@@ -109,7 +109,7 @@ func (h *AuthHandlers) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		email := strings.TrimSpace(r.PostForm.Get("email"))
 		password := r.PostForm.Get("password")
 		passwordConfirm := r.PostForm.Get("password_confirm")
-		
+
 		// Get the "next" parameter if it exists
 		next := r.URL.Query().Get("next")
 		if next == "" {
@@ -118,68 +118,68 @@ func (h *AuthHandlers) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Basic validation
 		errors := make(map[string]string)
-		
+
 		// Validate email
 		if email == "" {
 			errors["email"] = "Email is required"
 		}
-		
+
 		// Validate password
 		if password == "" {
 			errors["password"] = "Password is required"
 		} else if len(password) < 8 {
 			errors["password"] = "Password must be at least 8 characters long"
 		}
-		
+
 		// Check if passwords match
 		if password != passwordConfirm {
 			errors["password_confirm"] = "Passwords do not match"
 		}
-		
+
 		// Check if email is already in use
 		existingUser, err := h.UserModel.GetByEmail(email)
 		if err != nil {
 			http.Error(w, "Could not check user existence", http.StatusInternalServerError)
 			return
 		}
-		
+
 		if existingUser != nil {
 			errors["email"] = "Email is already in use"
 		}
-		
+
 		// If there are validation errors, re-render the form
 		if len(errors) > 0 {
 			data := struct {
-				Email          string
-				Errors         map[string]string
-				NextURL        string
+				Email   string
+				Errors  map[string]string
+				NextURL string
 			}{
-				Email:          email,
-				Errors:         errors,
-				NextURL:        next,
+				Email:   email,
+				Errors:  errors,
+				NextURL: next,
 			}
 			h.Templates.ExecuteTemplate(w, "register.tmpl", data)
 			return
 		}
-		
+
 		// Create the user
 		user := &models.User{
 			Email: email,
 		}
-		
+
 		err = h.UserModel.Insert(user, password)
 		if err != nil {
 			http.Error(w, "Could not create user", http.StatusInternalServerError)
 			return
 		}
-		
+
 		// Generate a JWT token
 		token, err := h.JWTManager.GenerateToken(user.ID)
 		if err != nil {
 			http.Error(w, "Could not generate authentication token", http.StatusInternalServerError)
 			return
 		}
-		
+
 		// Set the token as a cookie
 		http.SetCookie(w, &http.Cookie{
 			Name:     "session",
@@ -189,12 +189,12 @@ func (h *AuthHandlers) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			Expires:  time.Now().Add(24 * time.Hour),
 			SameSite: http.SameSiteLaxMode,
 		})
-		
+
 		// Redirect to the next URL or home page
 		http.Redirect(w, r, next, http.StatusSeeOther)
 		return
 	}
-	
+
 	// For GET requests, render the registration page
 	next := r.URL.Query().Get("next")
 	data := struct {
@@ -218,7 +218,7 @@ func (h *AuthHandlers) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		MaxAge:   -1, // Expire immediately
 		SameSite: http.SameSiteLaxMode,
 	})
-	
+
 	// Redirect to the login page
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }

@@ -111,7 +111,7 @@ flag --dsn=URL`)
 	mux := app.routes()
 
 	app.Logger.Info("Now listening on port http://127.0.0.1:" + *addr)
-	
+
 	// Apply middleware chain: logging -> authentication -> routes
 	middlewareChain := middlewareApp.LoggingMiddleware(
 		middlewareApp.AuthMiddleware(jwtManager)(mux),
