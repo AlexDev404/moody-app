@@ -1,8 +1,8 @@
 {{define "login"}}
 <div class="uk-container uk-container-sm py-8">
-    <div class="uk-card w-full max-w-md mx-auto">
-        <div class="uk-card-header">
-            <h1 class="text-2xl font-bold">Login</h1>
+    <div class="uk-card w-full max-w-md mx-auto bg-zinc-900 rounded-lg shadow-lg">
+        <div class="uk-card-header border-b border-zinc-800 text-center">
+            <h1 class="text-3xl font-bold text-zinc-50 playfair">Login</h1>
         </div>
         <div class="uk-card-body">
             {{if .Data.PageData.Error}}
@@ -13,34 +13,34 @@
             <form method="POST" action="/login{{if .Data.PageData.NextURL}}?next={{.Data.PageData.NextURL}}{{end}}">
                 <div class="space-y-4">
                     <div>
-                        <label for="email" class="block text-sm font-medium mb-1">Email</label>
+                        <label for="email" class="block text-sm font-medium mb-1 text-zinc-200">Email</label>
                         <input 
                             type="email" 
                             id="email" 
                             name="email" 
                             value="{{.Data.PageData.Email}}"
-                            class="w-full p-2 rounded-md border border-border bg-background"
+                            class="uk-input w-full p-2 rounded-md border border-zinc-700 bg-zinc-800 text-zinc-100 focus:border-primary-glow focus:ring-1 focus:ring-primary-glow"
                             required
                         >
                     </div>
                     <div>
-                        <label for="password" class="block text-sm font-medium mb-1">Password</label>
+                        <label for="password" class="block text-sm font-medium mb-1 text-zinc-200">Password</label>
                         <input 
                             type="password" 
                             id="password" 
                             name="password" 
-                            class="w-full p-2 rounded-md border border-border bg-background" 
+                            class="uk-input w-full p-2 rounded-md border border-zinc-700 bg-zinc-800 text-zinc-100 focus:border-primary-glow focus:ring-1 focus:ring-primary-glow" 
                             required
                         >
                     </div>
                     <div>
-                        <button type="submit" class="uk-btn uk-btn-primary w-full">Login</button>
+                        <button type="submit" class="uk-btn bg-primary-glow text-zinc-900 mt-4 w-full font-medium rounded-md">Login</button>
                     </div>
                 </div>
             </form>
         </div>
-        <div class="uk-card-footer text-center">
-            <p>Don't have an account? <a href="/register{{if .Data.PageData.NextURL}}?next={{.Data.PageData.NextURL}}{{end}}" class="text-primary hover:underline">Register</a></p>
+        <div class="uk-card-footer text-center border-t border-zinc-800">
+            <p class="text-zinc-300">Don't have an account? <a href="/register{{if .Data.PageData.NextURL}}?next={{.Data.PageData.NextURL}}{{end}}" class="text-primary-glow hover:underline">Register</a></p>
         </div>
     </div>
 </div>
