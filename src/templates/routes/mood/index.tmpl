@@ -18,11 +18,14 @@
         <!-- Content -->
         <section class="flex flex-col py-2 px-20 justify-center items-center gap-32 self-stretch flex-1">
             <headline class="flex flex-col gap-20 py-16 justify-center items-center w-full">
-                <h1 class="uk-h1 playfair">{{/* .Data.PageData.Playlist */}}Your Playlist</h1>
+                <ux-headline-inner class="flex flex-col gap-4 items-center w-full">
+                    <h1 class="uk-h1 playfair">Your Playlist</h1>
+                    <h2 class="uk-h2">{{ .Data.PageData.Playlist.name }}</h2>
+                </ux-headline-inner>
                 {{ template "partial/ux/music_player" . }}
             </headline>
             <ux-past-playlists-body class="flex flex-col items-start gap-8 self-stretch">
-                {{ range .Data.PageData.Playlist }} {{/* . */}}
+                {{ range .Data.PageData.Tracks }} {{/* . */}}
                 <ux-border-glow class="p-1 rounded-md w-full flex items-center justify-start">
                     <ux-past-playlist-item
                         class="flex p-4 items-start gap-4 bg-zinc-900 rounded-lg self-stretch w-full"

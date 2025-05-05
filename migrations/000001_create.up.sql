@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS tracks (
     artist TEXT NOT NULL,
     title TEXT NOT NULL,
     youtube_url TEXT NOT NULL,
+    reason TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

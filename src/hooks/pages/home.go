@@ -59,5 +59,6 @@ func HomeForm(pageData map[string]interface{}, db *types.Models, r *http.Request
 	}
 
 	pageData["Message"] = "✓ Mood submitted successfully!"
+	pageData["mood_id"] = newMood.ID
 	return pageData
 }

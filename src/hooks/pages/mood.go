@@ -140,7 +140,10 @@ func MoodForm(pageData map[string]interface{}, db *types.Models, r *http.Request
 					pageData["Failure"] = "✗ Failed to submit playlist request. Please try again later."
 					return pageData
 				}
-				pageData["Playlist"] = playlist
+				pageData["Tracks"] = playlist
+				pageData["Playlist"] = map[string]string{
+					"name": newPlaylist.Name,
+				}
 			}
 		}
 
@@ -163,7 +166,10 @@ func MoodForm(pageData map[string]interface{}, db *types.Models, r *http.Request
 				"reason":    "",
 			})
 		}
-		pageData["Playlist"] = trackList
+		pageData["Tracks"] = trackList
+		pageData["Playlist"] = map[string]string{
+			"name": existingPlaylist.Name,
+		}
 		pageData["Message"] = "✓ Playlist request submitted successfully!"
 		return pageData
 	}

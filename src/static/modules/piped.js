@@ -1,7 +1,7 @@
 export class Piped {
   constructor() {
-    // this.apiUrl = "https://pipedapi.wireway.ch";
-    this.apiUrl = "https://pipedapi.ducks.party";
+    this.apiUrl = "https://pipedapi.wireway.ch";
+    // this.apiUrl = "https://pipedapi.ducks.party";
     // this.apiUrl = "https://pipedapi.kavin.rocks";
     this.playerId = "piped:audio";
     this.playerElement = null;
@@ -35,10 +35,29 @@ export class Piped {
     });
 
     if (!window._playerStateChangeListener) {
+      console.log("piped:init");
       // Create new player instance and remove spinner when ready
-      document.addEventListener("piped:playerStateChange", (e) => {
-        pipedPlayer?.updateState(e.detail.state);
+      document.addEventListener("piped:external_playerStateChange", (e) => {
+        this.updateState(e.detail.state);
       });
+      this.playerElement.onwaiting = () => {
+        this.updateState(this.STATE.LOADING);
+      };
+
+      this.playerElement.onloadeddata = () => {
+        document.dispatchEvent(
+          new CustomEvent("piped:external_playerStateChange", {
+            detail: { state: "PLAYING" },
+          })
+        );
+      };
+
+      this.playerElement.onplaying = () => {
+        setTimeout(() => {
+          this.updateState(this.STATE.PLAYING);
+        }, 300);
+      };
+
       window._playerStateChangeListener = true; // Set flag to prevent multiple listeners
     }
   }
@@ -84,6 +103,7 @@ export class Piped {
     if (newState === this.STATE.STOPPED) {
       this.stop();
     }
+
     document.dispatchEvent(
       new CustomEvent("piped:playerStateChange", {
         detail: { state: newState },
@@ -106,18 +126,6 @@ export class Piped {
       this.playerInstance.stop();
     }
 
-    this.playerElement.onwaiting = () => {
-      this.updateState(this.STATE.LOADING);
-    };
-
-    this.playerElement.onloadeddata = () => {
-      document.dispatchEvent(
-        new CustomEvent("piped:playerStateChange", {
-          detail: { state: "PLAYING" },
-        })
-      );
-    };
-
     this.playerInstance = new PipedPlayer(this.playerElement, {
       autoplay: true,
       search: searchQuery,
@@ -138,7 +146,6 @@ export class Piped {
   stop() {
     if (this.playerInstance) {
       this.playerInstance.stop();
-      this.updateState(this.STATE.STOPPED); // Update state to STOPPED
     } else {
       console.error("Player instance not initialized.");
     }

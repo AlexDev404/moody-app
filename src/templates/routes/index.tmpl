@@ -1,16 +1,20 @@
 {{define "index"}}
 <script defer>
-		window.trackEventListener(document, "appLoad", function () {
-			const emotionsFelt = {{ .Data.PageData.emotions_felt}};
-			const bar = document.getElementById("mood-meter");
-			
-			// Use a for loop to animate the progress bar
-			for(var counter = 0; counter <= emotionsFelt; counter ++) {
-				setTimeout(function() {
-					bar.value += counter;
-				}, 20 * (counter / 2));
-			}
-		});
+	window.trackEventListener(document, "appLoad", function () {
+		const emotionsFelt = {{ .Data.PageData.emotions_felt}};
+		const bar = document.getElementById("mood-meter");
+
+		// Use a for loop to animate the progress bar
+		for(var counter = 0; counter <= emotionsFelt; counter ++) {
+			setTimeout(function() {
+				bar.value += counter;
+			}, 20 * (counter / 2));
+		}
+		const moodButton = document.getElementById("mood-button");
+		if (moodButton) {
+			moodButton.click();
+		}
+	});
 </script>
 
 <main class="flex flex-col items-center">
@@ -23,7 +27,12 @@
 	</div>
 	<!-- Content -->
 	<section class="flex flex-col py-2 px-20 justify-center items-center gap-12 self-stretch flex-1">
-		{{ template "partial/home/headline" . }}
+		{{ template "partial/home/headline" . }} {{ if .Data.PageData.mood_id }}
+		<form method="POST" action="/mood">
+			<input type="hidden" name="mood_id" value="{{ .Data.PageData.mood_id }}" />
+			<button type="submit" class="hidden" id="mood-button"></button>
+		</form>
+		{{ end }}
 	</section>
 </main>
 {{end}}
