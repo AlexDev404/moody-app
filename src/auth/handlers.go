@@ -1,20 +1,29 @@
-package main
+package auth
 
 import (
 	"baby-blog/database/models"
-	"baby-blog/middleware"
-	"encoding/json"
+	"html/template"
 	"net/http"
 	"strings"
 	"time"
 )
 
-// HandleLogin handles login requests
-func (app *Application) HandleLogin(w http.ResponseWriter, r *http.Request) {
-	pageData := map[string]interface{}{
-		"NextURL": r.URL.Query().Get("next"),
-	}
+// ModelInterface defines an interface for accessing user models
+type ModelInterface interface {
+	Authenticate(email, password string) (*models.User, error)
+	GetByEmail(email string) (*models.User, error)
+	Insert(user *models.User, password string) error
+}
 
+// AuthHandlers encapsulates the authentication handlers
+type AuthHandlers struct {
+	Templates  *template.Template
+	UserModel  ModelInterface
+	JWTManager *JWTManager
+}
+
+// LoginHandler handles user login requests
+func (h *AuthHandlers) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Process the form if it's a POST request
 	if r.Method == http.MethodPost {
 		// Parse the form data
@@ -27,19 +36,32 @@ func (app *Application) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		// Extract the email and password from the form
 		email := r.PostForm.Get("email")
 		password := r.PostForm.Get("password")
+		
+		// Get the "next" parameter if it exists
+		next := r.URL.Query().Get("next")
+		if next == "" {
+			next = "/"
+		}
 
 		// Authenticate the user
-		user, err := app.models.Users.Authenticate(email, password)
+		user, err := h.UserModel.Authenticate(email, password)
 		if err != nil {
 			// Render the login page with an error message
-			pageData["Error"] = "Invalid email or password"
-			pageData["Email"] = email
-			app.Render(w, r, app.templates, pageData)
+			data := struct {
+				Error    string
+				Email    string
+				NextURL  string
+			}{
+				Error:    "Invalid email or password",
+				Email:    email,
+				NextURL:  next,
+			}
+			h.Templates.ExecuteTemplate(w, "login.tmpl", data)
 			return
 		}
 
 		// Generate a JWT token
-		token, err := app.jwtManager.GenerateToken(user.ID)
+		token, err := h.JWTManager.GenerateToken(user.ID)
 		if err != nil {
 			http.Error(w, "Could not generate authentication token", http.StatusInternalServerError)
 			return
@@ -55,22 +77,25 @@ func (app *Application) HandleLogin(w http.ResponseWriter, r *http.Request) {
 			SameSite: http.SameSiteLaxMode,
 		})
 
-		// Redirect safely using the utility function
-		RedirectToSafeURL(w, r, "/", app.Logger)
+		// Redirect to the next URL or home page
+		http.Redirect(w, r, next, http.StatusSeeOther)
 		return
 	}
 
 	// For GET requests, render the login page
-	app.Render(w, r, app.templates, pageData)
+	next := r.URL.Query().Get("next")
+	data := struct {
+		Error    string
+		Email    string
+		NextURL  string
+	}{
+		NextURL: next,
+	}
+	h.Templates.ExecuteTemplate(w, "login.tmpl", data)
 }
 
-// HandleRegister handles user registration
-func (app *Application) HandleRegister(w http.ResponseWriter, r *http.Request) {
-	pageData := map[string]interface{}{
-		"NextURL": r.URL.Query().Get("next"),
-		"Errors":  map[string]string{},
-	}
-
+// RegisterHandler handles user registration
+func (h *AuthHandlers) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	// Process the form if it's a POST request
 	if r.Method == http.MethodPost {
 		// Parse the form data
@@ -84,64 +109,77 @@ func (app *Application) HandleRegister(w http.ResponseWriter, r *http.Request) {
 		email := strings.TrimSpace(r.PostForm.Get("email"))
 		password := r.PostForm.Get("password")
 		passwordConfirm := r.PostForm.Get("password_confirm")
+		
+		// Get the "next" parameter if it exists
+		next := r.URL.Query().Get("next")
+		if next == "" {
+			next = "/"
+		}
 
 		// Basic validation
 		errors := make(map[string]string)
-
+		
 		// Validate email
 		if email == "" {
 			errors["email"] = "Email is required"
 		}
-
+		
 		// Validate password
 		if password == "" {
 			errors["password"] = "Password is required"
 		} else if len(password) < 8 {
 			errors["password"] = "Password must be at least 8 characters long"
 		}
-
+		
 		// Check if passwords match
 		if password != passwordConfirm {
 			errors["password_confirm"] = "Passwords do not match"
 		}
-
+		
 		// Check if email is already in use
-		existingUser, err := app.models.Users.GetByEmail(email)
+		existingUser, err := h.UserModel.GetByEmail(email)
 		if err != nil {
 			http.Error(w, "Could not check user existence", http.StatusInternalServerError)
 			return
 		}
-
+		
 		if existingUser != nil {
 			errors["email"] = "Email is already in use"
 		}
-
+		
 		// If there are validation errors, re-render the form
 		if len(errors) > 0 {
-			pageData["Email"] = email
-			pageData["Errors"] = errors
-			app.Render(w, r, app.templates, pageData)
+			data := struct {
+				Email          string
+				Errors         map[string]string
+				NextURL        string
+			}{
+				Email:          email,
+				Errors:         errors,
+				NextURL:        next,
+			}
+			h.Templates.ExecuteTemplate(w, "register.tmpl", data)
 			return
 		}
-
+		
 		// Create the user
 		user := &models.User{
 			Email: email,
 		}
-
-		err = app.models.Users.Insert(user, password)
+		
+		err = h.UserModel.Insert(user, password)
 		if err != nil {
 			http.Error(w, "Could not create user", http.StatusInternalServerError)
 			return
 		}
-
+		
 		// Generate a JWT token
-		token, err := app.jwtManager.GenerateToken(user.ID)
+		token, err := h.JWTManager.GenerateToken(user.ID)
 		if err != nil {
 			http.Error(w, "Could not generate authentication token", http.StatusInternalServerError)
 			return
 		}
-
+		
 		// Set the token as a cookie
 		http.SetCookie(w, &http.Cookie{
 			Name:     "session",
@@ -151,18 +189,26 @@ func (app *Application) HandleRegister(w http.ResponseWriter, r *http.Request) {
 			Expires:  time.Now().Add(24 * time.Hour),
 			SameSite: http.SameSiteLaxMode,
 		})
-
-		// Redirect safely using the utility function
-		RedirectToSafeURL(w, r, "/", app.Logger)
+		
+		// Redirect to the next URL or home page
+		http.Redirect(w, r, next, http.StatusSeeOther)
 		return
 	}
-
+	
 	// For GET requests, render the registration page
-	app.Render(w, r, app.templates, pageData)
+	next := r.URL.Query().Get("next")
+	data := struct {
+		Email   string
+		Errors  map[string]string
+		NextURL string
+	}{
+		NextURL: next,
+	}
+	h.Templates.ExecuteTemplate(w, "register.tmpl", data)
 }
 
-// HandleLogout handles user logout
-func (app *Application) HandleLogout(w http.ResponseWriter, r *http.Request) {
+// LogoutHandler handles user logout
+func (h *AuthHandlers) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	// Clear the session cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session",
@@ -172,36 +218,7 @@ func (app *Application) HandleLogout(w http.ResponseWriter, r *http.Request) {
 		MaxAge:   -1, // Expire immediately
 		SameSite: http.SameSiteLaxMode,
 	})
-
+	
 	// Redirect to the login page
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
-}
-
-// GetCurrentUser returns the user from the current request context
-func (app *Application) GetCurrentUser(r *http.Request) (*models.User, error) {
-	userID := middleware.GetUserID(r)
-	if userID == "" {
-		return nil, nil
-	}
-	return app.models.Users.GetByID(userID)
-}
-
-// APIResponse represents a standard API response
-type APIResponse struct {
-	Success bool        `json:"success"`
-	Data    interface{} `json:"data,omitempty"`
-	Error   string      `json:"error,omitempty"`
-}
-
-// RespondJSON sends a JSON response
-func RespondJSON(w http.ResponseWriter, status int, payload interface{}) {
-	response, err := json.Marshal(payload)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	w.Write(response)
 }

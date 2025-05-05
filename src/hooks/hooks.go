@@ -1,6 +1,7 @@
 package hooks
 
 import (
+	"baby-blog/middleware"
 	"baby-blog/types"
 	"log/slog"
 	"net/http"
@@ -34,6 +35,20 @@ func Hooks(pageData map[string]interface{}, dbModels *types.Models, r *http.Requ
 	// Create the hooks connector with the custom logger
 	hooks := HooksConnector{
 		Logger: slog.New(handler).With(slog.String("component", "Hooks")),
+	}
+
+	// Add authentication information to page data
+	userID := middleware.GetUserID(r)
+	if userID != "" {
+		user, err := dbModels.Users.GetByID(userID)
+		if err == nil && user != nil {
+			pageData["IsAuthenticated"] = true
+			pageData["User"] = user
+		} else {
+			pageData["IsAuthenticated"] = false
+		}
+	} else {
+		pageData["IsAuthenticated"] = false
 	}
 
 	// Default hook: Render PageData for the current page (if any)

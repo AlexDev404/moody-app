@@ -4,6 +4,7 @@ import (
 	"baby-blog/database/models"
 	"baby-blog/forms"
 	"baby-blog/forms/validator"
+	"baby-blog/middleware"
 	"baby-blog/types"
 	"context"
 	"encoding/json"
@@ -16,8 +17,14 @@ import (
 )
 
 func Mood(pageData map[string]interface{}, db *types.Models, r *http.Request, w http.ResponseWriter) map[string]interface{} {
-	// Get today's playlist entry if it exists
+	// Check if user is authenticated
+	userID := middleware.GetUserID(r)
+	if userID == "" {
+		pageData["Failure"] = "You must be logged in to access this page."
+		return pageData
+	}
 
+	// Get today's playlist entry if it exists
 	if r.Method == http.MethodPost {
 		if err := r.ParseForm(); err != nil {
 			log.Println(forms.FormHandlerErrorMessage, "error", err)
@@ -40,6 +47,13 @@ func MoodForm(pageData map[string]interface{}, db *types.Models, r *http.Request
 		return pageData
 	}
 
+	// Get the user ID from the context
+	userID := middleware.GetUserID(r)
+	if userID == "" {
+		pageData["Failure"] = "You must be logged in to create playlists."
+		return pageData
+	}
+
 	mood := formData["mood_id"].(string)
 	// Find the mood ID in the database
 	moodEntry, err := db.Moods.GetByID(mood)
@@ -48,6 +62,12 @@ func MoodForm(pageData map[string]interface{}, db *types.Models, r *http.Request
 		log.Println(forms.FormHandlerErrorMessage, "error", err)
 		http.Error(w, forms.FormHandlerBadRequestMessage, http.StatusBadRequest)
 		pageData["Failure"] = "✗ Failed to submit playlist request. Please try again later."
+		return pageData
+	}
+
+	// Verify the mood belongs to the current user
+	if moodEntry.UserID != "" && moodEntry.UserID != userID {
+		pageData["Failure"] = "You don't have permission to access this mood."
 		return pageData
 	}
 
@@ -101,6 +121,7 @@ func MoodForm(pageData map[string]interface{}, db *types.Models, r *http.Request
 			newPlaylist := &models.Playlist{
 				MoodID: moodEntry.ID,
 				Name:   moodEntry.MoodText,
+				UserID: userID, // Set the user ID for the new playlist
 			}
 
 			err = db.Playlists.Insert(newPlaylist)
@@ -148,6 +169,12 @@ func MoodForm(pageData map[string]interface{}, db *types.Models, r *http.Request
 		}
 
 	} else {
+		// Verify the playlist belongs to the current user
+		if existingPlaylist.UserID != "" && existingPlaylist.UserID != userID {
+			pageData["Failure"] = "You don't have permission to access this playlist."
+			return pageData
+		}
+
 		// If a playlist already exists, just return it
 		tracks, err := db.Tracks.GetAllForPlaylist(existingPlaylist.ID)
 		if err != nil {
@@ -178,6 +205,7 @@ func MoodForm(pageData map[string]interface{}, db *types.Models, r *http.Request
 	return pageData
 }
 
+// SubmitToAI function remains unchanged
 func SubmitToAI(mood string) (string, error) {
 	// client := openai.NewClient(apiKey) // Default client
 	// Custom client config

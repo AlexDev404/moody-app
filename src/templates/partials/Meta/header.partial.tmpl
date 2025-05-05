@@ -1,3 +1,21 @@
 {{define "header"}}
     <audio id="piped:audio" class="hidden" controls preload="auto" ontimeupdate="AudioPlayer.updateTime()"></audio>
+    
+    <header class="mb-6">
+        <nav class="flex items-center justify-between py-4">
+            <div>
+                <a href="/" class="text-xl font-bold">Moody App</a>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                {{if .Data.PageData.IsAuthenticated}}
+                    <span class="text-sm">{{.Data.PageData.User.Email}}</span>
+                    <a href="/logout" class="px-3 py-2 rounded-md bg-zinc-800 hover:bg-zinc-700 transition-colors">Logout</a>
+                {{else}}
+                    <a href="/login" class="px-3 py-2 rounded-md bg-zinc-800 hover:bg-zinc-700 transition-colors">Login</a>
+                    <a href="/register" class="px-3 py-2 rounded-md bg-primary text-black hover:bg-primary/90 transition-colors">Register</a>
+                {{end}}
+            </div>
+        </nav>
+    </header>
 {{end}}

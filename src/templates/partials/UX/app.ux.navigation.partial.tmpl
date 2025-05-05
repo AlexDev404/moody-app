@@ -8,6 +8,19 @@
         <ux-icon color="#FCFCFC" data-lucide="tent" name="tools" class="size-14" stroke-width="1px"></ux-icon>
         <ux-navigation-item-label>Tools</ux-navigation-item-label>
     </ux-navigation-item>
+    
+    {{if .Data.PageData.IsAuthenticated}}
+    <ux-navigation-item href="/logout" class="rounded-md bg-transparent">
+        <ux-icon color="#FCFCFC" data-lucide="log-out" name="logout" class="size-14" stroke-width="1px"></ux-icon>
+        <ux-navigation-item-label>Logout</ux-navigation-item-label>
+    </ux-navigation-item>
+    {{else}}
+    <ux-navigation-item href="/login" class="rounded-md bg-transparent">
+        <ux-icon color="#FCFCFC" data-lucide="log-in" name="login" class="size-14" stroke-width="1px"></ux-icon>
+        <ux-navigation-item-label>Login</ux-navigation-item-label>
+    </ux-navigation-item>
+    {{end}}
+    
     <!---
     <ux-navigation-item href="/analyze" class="rounded-md bg-transparent">
         <ux-icon color="#FCFCFC" data-lucide="bar-chart-2" name="analyze" class="size-14" stroke-width="1px"></ux-icon>

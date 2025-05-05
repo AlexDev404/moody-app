@@ -1,0 +1,61 @@
+{{define "register"}}
+<div class="uk-container uk-container-sm py-8">
+    <div class="uk-card w-full max-w-md mx-auto">
+        <div class="uk-card-header">
+            <h1 class="text-2xl font-bold">Create an Account</h1>
+        </div>
+        <div class="uk-card-body">
+            <form method="POST" action="/register{{if .Data.PageData.NextURL}}?next={{.Data.PageData.NextURL}}{{end}}">
+                <div class="space-y-4">
+                    <div>
+                        <label for="email" class="block text-sm font-medium mb-1">Email</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            value="{{.Data.PageData.Email}}" 
+                            class="w-full p-2 rounded-md border border-border bg-background {{if index .Data.PageData.Errors "email"}}border-destructive{{end}}"
+                            required
+                        >
+                        {{if index .Data.PageData.Errors "email"}}
+                            <p class="text-destructive text-sm mt-1">{{index .Data.PageData.Errors "email"}}</p>
+                        {{end}}
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium mb-1">Password</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="w-full p-2 rounded-md border border-border bg-background {{if index .Data.PageData.Errors "password"}}border-destructive{{end}}" 
+                            required
+                        >
+                        {{if index .Data.PageData.Errors "password"}}
+                            <p class="text-destructive text-sm mt-1">{{index .Data.PageData.Errors "password"}}</p>
+                        {{end}}
+                    </div>
+                    <div>
+                        <label for="password_confirm" class="block text-sm font-medium mb-1">Confirm Password</label>
+                        <input 
+                            type="password" 
+                            id="password_confirm" 
+                            name="password_confirm" 
+                            class="w-full p-2 rounded-md border border-border bg-background {{if index .Data.PageData.Errors "password_confirm"}}border-destructive{{end}}" 
+                            required
+                        >
+                        {{if index .Data.PageData.Errors "password_confirm"}}
+                            <p class="text-destructive text-sm mt-1">{{index .Data.PageData.Errors "password_confirm"}}</p>
+                        {{end}}
+                    </div>
+                    <div>
+                        <button type="submit" class="uk-btn uk-btn-primary w-full">Register</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="uk-card-footer text-center">
+            <p>Already have an account? <a href="/login{{if .Data.PageData.NextURL}}?next={{.Data.PageData.NextURL}}{{end}}" class="text-primary hover:underline">Login</a></p>
+        </div>
+    </div>
+</div>
+{{end}}
