@@ -1,6 +1,7 @@
 export class Piped {
   constructor() {
-    this.apiUrl = "https://pipedapi.wireway.ch";
+    this.apiUrl = "https://piped-api.fly.dev";
+    // this.apiUrl = "https://pipedapi.wireway.ch";
     // this.apiUrl = "https://pipedapi.ducks.party";
     // this.apiUrl = "https://pipedapi.kavin.rocks";
     this.playerId = "piped:audio";
