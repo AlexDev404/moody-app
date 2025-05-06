@@ -1,28 +1,169 @@
 {{define "tools"}}
 <script defer>
-    // Nothing
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get all timeline filter buttons
+        const timelineButtons = document.querySelectorAll('.timeline-filter');
+        
+        // Add click event listeners to each button
+        timelineButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const timeFilter = this.dataset.timeFilter;
+                
+                // Update active state visually
+                timelineButtons.forEach(btn => {
+                    btn.classList.remove('bg-primary-glow', 'text-zinc-900');
+                    btn.classList.add('uk-btn-default');
+                });
+                
+                this.classList.remove('uk-btn-default');
+                this.classList.add('bg-primary-glow', 'text-zinc-900');
+                
+                // Fetch the filtered data
+                fetch(`/tools/filter?timeFilter=${timeFilter}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the page content with the new data
+                        updateToolsContent(data.data);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+        
+        // Function to update the tools content
+        function updateToolsContent(data) {
+            console.log("Received data:", data); // Debug log
+            
+            // Update the title section
+            const titleElement = document.getElementById('mood-period-title');
+            if (titleElement && data.title) {
+                titleElement.textContent = data.title;
+            }
+            
+            // Update the mood entries
+            const moodsContainer = document.getElementById('moods-container');
+            if (moodsContainer) {
+                // Clear current content
+                moodsContainer.innerHTML = '';
+                
+                // Check if moods is null, undefined, or empty
+                if (!data.moods || data.moods.length === 0) {
+                    // Show message if no moods found for this period
+                    moodsContainer.innerHTML = '<p id="no-moods-message" class="text-center py-8">No moods recorded for this period</p>';
+                    return; // Exit early
+                }
+                
+                // Create elements for each mood
+                data.moods.forEach((mood, index) => {
+                    if (!mood) return; // Skip if mood is null
+                    
+                    // Create a container for the mood
+                    const actionCenter = document.createElement('action-center');
+                    actionCenter.id = `mood-item-${index}`;
+                    
+                    // Generate HTML for this mood
+                    const buttonText = mood.hasPlaylist ? 'View Playlist' : 'Generate Playlist';
+                    
+                    actionCenter.innerHTML = `
+                        <headline class="flex py-16 justify-center items-center">
+                            <h1 class="uk-h1 playfair">Your Mood: "${mood.text}"</h1>
+                        </headline>
+                        <div class="flex flex-col gap-8">
+                            <form method="POST" action="/mood">
+                                <input type="hidden" name="mood_id" value="${mood.id}">
+                                <div class="flex flex-col items-start gap-2 self-stretch">
+                                    <div data-uk-form-custom class="flex items-start w-full gap-2">
+                                        <div class="flex flex-col justify-center items-center gap-12 self-stretch w-full">
+                                            <div class="flex flex-col justify-center items-center gap-8 self-stretch w-full">
+                                                <div class="flex items-center justify-center gap-2 self-stretch">
+                                                    <button class="uk-btn bg-primary-glow text-zinc-900">
+                                                        ↻
+                                                    </button>
+                                                    <button type="submit" class="uk-btn bg-primary-glow flex-1 text-zinc-900">
+                                                        ${buttonText}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    `;
+                    
+                    // Add this mood to the container
+                    moodsContainer.appendChild(actionCenter);
+                });
+            }
+        }
+    });
 </script>
 
 <main class="flex flex-col items-center">
-    <!-- Dynamic "mood meter" -->
+    <!-- Dynamic timeline filter -->
     <div class="flex flex-col items-center self-stretch gap-2">
         <ul class="flex py-2 justify-center items-center self-stretch gap-2" data-uk-tab>
-            <li class="uk-active"><button type="button" class="uk-btn bg-primary-glow text-zinc-900">Today</button></li>
-            <li><button type="button" class="uk-btn uk-btn-default">Yesterday</button></li>
-            <li><button type="button" class="uk-btn uk-btn-default">April - May</button></li>
-            <li><button type="button" class="uk-btn uk-btn-default">June - Jul</button></li>
-            <li><button type="button" class="uk-btn uk-btn-default">Aug - Sep</button></li>
+            <li class="uk-active"><button type="button" class="uk-btn bg-primary-glow text-zinc-900 timeline-filter" data-time-filter="today">Today</button></li>
+            <li><button type="button" class="uk-btn uk-btn-default timeline-filter" data-time-filter="yesterday">Yesterday</button></li>
+            <li><button type="button" class="uk-btn uk-btn-default timeline-filter" data-time-filter="day-before">The day before</button></li>
+            <li><button type="button" class="uk-btn uk-btn-default timeline-filter" data-time-filter="three-days-ago">Three days ago</button></li>
+            <li><button type="button" class="uk-btn uk-btn-default timeline-filter" data-time-filter="four-days-ago">Four days ago</button></li>
         </ul>
     </div>
     <section class="flex flex-col pt-20 pb-64 justify-center items-center gap-12 self-stretch flex-1">
         <!-- Content -->
         <section class="flex flex-col py-2 px-20 justify-center items-center gap-32 self-stretch flex-1">
-            {{ template "partial/tools/headline" . }}
+            <headline class="flex flex-col gap-4 py-4 justify-center items-center w-full">
+                <h1 class="uk-h1 playfair">Mood History</h1>
+                <h2 id="mood-period-title" class="uk-h2 mood-period-title">Today's Moods</h2>
+            </headline>
+            
+            <!-- This div will be updated when timeline filters are clicked -->
+            <div id="moods-container" class="moods-container flex flex-col w-full gap-12">
+                {{ if .Data.PageData.moods }}
+                    {{ range .Data.PageData.moods }}
+                    <action-center>
+                        <headline class="flex py-16 justify-center items-center">
+                            <h1 class="uk-h1 playfair">Your Mood: "{{ .MoodText }}"</h1>
+                        </headline>
+                        <div class="flex flex-col gap-8">
+                            <form method="POST" action="/mood">
+                                <input type="hidden" name="mood_id" value="{{ .ID }}">
+                                <div class="flex flex-col items-start gap-2 self-stretch">
+                                    <div data-uk-form-custom class="flex items-start w-full gap-2">
+                                        <div class="flex flex-col justify-center items-center gap-12 self-stretch w-full">
+                                            <div class="flex flex-col justify-center items-center gap-8 self-stretch w-full">
+                                                <div class="flex items-center justify-center gap-2 self-stretch">
+                                                    <button class="uk-btn bg-primary-glow text-zinc-900">
+                                                        ↻
+                                                    </button>
+                                                    <button type="submit" class="uk-btn bg-primary-glow flex-1 text-zinc-900">
+                                                        {{if .Playlist }}
+                                                            View Playlist
+                                                        {{ else }}
+                                                            Generate Playlist
+                                                        {{ end }}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </action-center>
+                    {{ end }}
+                {{ else }}
+                    <p id="initial-no-moods-message" class="text-center py-8">No moods recorded for today</p>
+                {{ end }}
+            </div>
         </section>
-        <!-- Content -->
-        {{/* <section class="flex flex-col space-between items-center self-stretch flex-1">
-            {{ template "partial/tools/body" . }}
-        </section> */}}
     </section>
 </main>
 {{end}}

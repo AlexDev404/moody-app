@@ -20,6 +20,7 @@ func (app *Application) routes() (mux *http.ServeMux) {
 	mux.HandleFunc("/login", app.HandleLogin)
 	mux.HandleFunc("/register", app.HandleRegister)
 	mux.HandleFunc("/logout", app.HandleLogout)
+	mux.HandleFunc("/tools/filter", app.HandleToolsFilter)
 
 	return mux
 }
