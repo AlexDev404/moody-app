@@ -13,9 +13,19 @@ window.addEventListener("popstate", async () => {
   // Handle the new route in your frontend
   console.log("Route changed to:", route);
 
+  // Add CSRF token to the request headers
+  const headers = {};
+  const csrfToken = document.querySelector('meta[name="csrf-token"]');
+  if (csrfToken) {
+    headers['X-CSRF-Token'] = csrfToken.getAttribute('content');
+  }
+
   // Fetch content from the Go backend (can be an API call or full-page fetch)
   try {
-    const response = await fetch(route);
+    const response = await fetch(route, {
+      headers: headers
+    });
+    
     if (response.ok) {
       const htmlContent = await response.text();
       // Create a temporary DOM element to parse the HTML response
@@ -27,8 +37,25 @@ window.addEventListener("popstate", async () => {
       // If the #content element exists in the new HTML, update the current #content
       if (newContent) {
         LifecycleManager.cleanupAll(); // Clear all intervals if needed
+        
+        const App = document.getElementById("content");
         // Update the #content on the current page
         App.innerHTML = newContent.innerHTML;
+
+        // Extract and update CSRF token if present in the new page
+        const newCsrfToken = doc.querySelector('meta[name="csrf-token"]');
+        if (newCsrfToken) {
+          const currentCsrfToken = document.querySelector('meta[name="csrf-token"]');
+          if (currentCsrfToken) {
+            currentCsrfToken.setAttribute('content', newCsrfToken.getAttribute('content'));
+          } else {
+            // If there's no CSRF token meta tag, create one
+            const meta = document.createElement('meta');
+            meta.name = 'csrf-token';
+            meta.content = newCsrfToken.getAttribute('content');
+            document.head.appendChild(meta);
+          }
+        }
 
         // Re-run any <script> tags within the new content
         const scripts = newContent.querySelectorAll("script");
@@ -40,7 +67,6 @@ window.addEventListener("popstate", async () => {
           document.dispatchEvent(event); // Dispatch the appLoad event again for the new content
           lucide.createIcons(); // Recreate icons if using lucide
           document.body.removeChild(newScript); // Optionally remove after execution
-          // Before replacing #content or during route change:
         });
       } else {
         console.error("No #content element in the response.");

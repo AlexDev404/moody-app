@@ -11,6 +11,9 @@
             </div>
             {{end}}
             <form method="POST" action="/login{{if .Data.PageData.NextURL}}?next={{.Data.PageData.NextURL}}{{end}}">
+                <!-- CSRF Protection -->
+                {{.Data.PageData.CSRFField}}
+                
                 <div class="space-y-4">
                     <div>
                         <label for="email" class="block text-sm font-medium mb-1 text-zinc-200">Email</label>

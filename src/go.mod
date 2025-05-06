@@ -4,6 +4,8 @@ go 1.23.4
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
+	github.com/gorilla/csrf v1.7.3 // indirect
+	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/mitranim/gg v0.1.19 // indirect
 	github.com/mitranim/gow v0.0.0-20250221114027-bda1053beca8 // indirect

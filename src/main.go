@@ -39,6 +39,14 @@ func (app *Application) runHooks(pageData map[string]interface{}, r *http.Reques
 		pageData["IsAuthenticated"] = false
 	}
 
+	// Add CSRF token to the page data from our middleware
+	token := middleware.GetCSRFToken(r)
+	pageData["CSRFToken"] = token
+
+	// Create template field for convenience
+	field := template.HTML("<input type=\"hidden\" name=\"csrf_token\" value=\"" + token + "\">")
+	pageData["CSRFField"] = field
+
 	// Run the existing hooks
 	return hooks.Hooks(pageData, app.models, r, w)
 }
@@ -112,9 +120,13 @@ flag --dsn=URL`)
 
 	app.Logger.Info("Now listening on port http://127.0.0.1:" + *addr)
 
-	// Apply middleware chain: logging -> authentication -> routes
+	// Apply middleware chain: logging -> CSRF -> authentication -> routes
+	csrfMiddleware := middlewareApp.CSRFMiddleware()
+
 	middlewareChain := middlewareApp.LoggingMiddleware(
-		middlewareApp.AuthMiddleware(jwtManager)(mux),
+		csrfMiddleware(
+			middlewareApp.AuthMiddleware(jwtManager)(mux),
+		),
 	)
 
 	err := http.ListenAndServe((":" + *addr), middlewareChain)

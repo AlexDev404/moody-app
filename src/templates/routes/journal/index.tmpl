@@ -8,6 +8,9 @@
 </div>
 <div class="w-full mx-auto bg-white p-6 rounded-md shadow-md border border-gray-200">
     <form action="/journal" method="post" class="space-y-6">
+        <!-- CSRF Protection -->
+        {{.Data.PageData.CSRFField}}
+        
         <div>
             <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
             <p class="text-red-500 text-sm">{{ .Data.PageData.Errors.title }}</p>

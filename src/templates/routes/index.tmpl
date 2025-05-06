@@ -29,6 +29,9 @@
 	<section class="flex flex-col py-2 px-20 justify-center items-center gap-12 self-stretch flex-1">
 		{{ template "partial/home/headline" . }} {{ if .Data.PageData.mood_id }}
 		<form method="POST" action="/mood">
+			<!-- CSRF Protection -->
+			{{.Data.PageData.CSRFField}}
+			
 			<input type="hidden" name="mood_id" value="{{ .Data.PageData.mood_id }}" />
 			<button type="submit" class="hidden" id="mood-button"></button>
 		</form>

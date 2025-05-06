@@ -6,6 +6,9 @@
         </div>
         <div class="uk-card-body">
             <form method="POST" action="/register{{if .Data.PageData.NextURL}}?next={{.Data.PageData.NextURL}}{{end}}">
+                <!-- CSRF Protection -->
+                {{.Data.PageData.CSRFField}}
+                
                 <div class="space-y-4">
                     <div>
                         <label for="email" class="block text-sm font-medium mb-1 text-zinc-200">Email</label>
@@ -27,7 +30,7 @@
                             type="password" 
                             id="password" 
                             name="password" 
-                            class="uk-input w-full p-2 rounded-md border border-zinc-700 bg-zinc-800 text-zinc-100 {{if index .Data.PageData.Errors "password"}}border-destructive{{end}} focus:border-primary-glow focus:ring-1 focus:ring-primary-glow" 
+                            class="uk-input w-full p-2 rounded-md border border-zinc-700 bg-zinc-800 text-zinc-100 {{if index .Data.PageData.Errors "password"}}border-destructive{{end}} focus:border-primary-glow focus:ring-1 focus:ring-primary-glow"
                             required
                         >
                         {{if index .Data.PageData.Errors "password"}}
