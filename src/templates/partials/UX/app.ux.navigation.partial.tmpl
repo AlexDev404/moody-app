@@ -9,8 +9,8 @@
         <ux-navigation-item-label>Tools</ux-navigation-item-label>
     </ux-navigation-item>
     
-    {{if .Data.PageData.IsAuthenticated}}
-    <ux-navigation-item href="/logout" class="rounded-md bg-transparent">
+    {{if .Page.IsAuthenticated}}
+    <ux-navigation-item href="/logout" data-reload class="rounded-md bg-transparent">
         <ux-icon color="#FCFCFC" data-lucide="log-out" name="logout" class="size-14" stroke-width="1px"></ux-icon>
         <ux-navigation-item-label>Logout</ux-navigation-item-label>
     </ux-navigation-item>

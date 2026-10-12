@@ -1,142 +1,66 @@
 package main
 
 import (
-	"bytes"
 	"flag"
-	"log"
 	"log/slog"
-	"net/http"
 	"os"
 
-	"baby-blog/auth"
 	"baby-blog/database"
 	"baby-blog/database/models"
-	"baby-blog/hooks"
-	"baby-blog/middleware"
-	"baby-blog/types"
-	"html/template"
-	"sync"
+	"baby-blog/pages"
+	"baby-blog/playlist"
+
+	"github.com/AlexDev404/folio"
 )
 
-// Application is a wrapper for types.Application
-type Application struct {
-	*types.Application
-	templates  *template.Template
-	models     *types.Models
-	jwtManager *auth.JWTManager
-	bufferPool sync.Pool
-}
-
-func (app *Application) runHooks(pageData map[string]interface{}, r *http.Request, w http.ResponseWriter) map[string]interface{} {
-	// Get the current user from the request context if available
-	user, _ := app.GetCurrentUser(r)
-
-	// Add the user to the page data if authenticated
-	if user != nil {
-		pageData["User"] = user
-		pageData["IsAuthenticated"] = true
-	} else {
-		pageData["IsAuthenticated"] = false
-	}
-
-	// Add CSRF token to the page data from our middleware
-	token := middleware.GetCSRFToken(r)
-	pageData["CSRFToken"] = token
-
-	// Create template field for convenience
-	field := template.HTML("<input type=\"hidden\" name=\"csrf_token\" value=\"" + token + "\">")
-	pageData["CSRFField"] = field
-
-	// Run the existing hooks
-	return hooks.Hooks(pageData, app.models, r, w)
-}
-
-func (app *Application) startup() {
+func main() {
 	addr := flag.String("addr", "4000", "HTTP network address")
 	dsn := flag.String("dsn", "postgresql://postgres:postgres@localhost:5432/moody?sslmode=disable", "PostgreSQL DSN")
-	openaiKey := flag.String("openai-key", "", "OpenAI API key")
-	jwtSecret := flag.String("jwt-secret", "", "JWT secret key for authentication")
+	openaiKey := flag.String("openai-key", os.Getenv("OPENAI_API_KEY"), "API key for GitHub Models (default $OPENAI_API_KEY)")
+	dev := flag.Bool("dev", false, "Reload templates and the browser on changes")
 	flag.Parse()
 
-	if *openaiKey == "" {
-		log.Fatal("OpenAI API key is required. Please pass the OPENAI_API_KEY flag.")
-	}
-
-	if *jwtSecret == "" {
-		log.Fatal("JWT secret key is required. Please pass the --jwt-secret flag.")
-	}
-
-	os.Setenv("OPENAI_API_KEY", *openaiKey)
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	templates, tErr := getTemplates()
-	if tErr != nil {
-		log.Fatal("Error parsing templates: ", tErr)
+	if *openaiKey == "" {
+		logger.Error("An API key for playlist generation is required: pass --openai-key or set OPENAI_API_KEY.")
+		os.Exit(1)
 	}
 
-	db, dbErr := database.OpenDB(*dsn)
-	if dbErr != nil {
-		log.Print(dbErr.Error())
-		log.Fatal(`This error usually results when the application could not connect to the database.
+	db, err := database.OpenDB(*dsn)
+	if err != nil {
+		logger.Error(err.Error())
+		logger.Error(`This error usually results when the application could not connect to the database.
 Ensure that PostgreSQL is installed and running on port 5432--otherwise pass a different URL to it using the
 flag --dsn=URL`)
 		os.Exit(1)
 	}
 	// release the database resources before exiting
 	defer db.Close()
-
 	logger.Info("database connection pool established")
 
-	// Create JWT manager
-	jwtManager := auth.NewJWTManager(*jwtSecret)
-
-	// Create middleware instance
-	middlewareApp := &middleware.Application{}
-
-	typesApp := &types.Application{
-		Logger:     logger,
-		Middleware: middlewareApp,
-	}
-
-	app = &Application{
-		Application: typesApp,
-		templates:   templates,
-		jwtManager:  jwtManager,
-		models: &types.Models{
-			Moods:     &models.MoodModel{Database: db},
-			Playlists: &models.PlaylistModel{Database: db},
-			Tracks:    &models.TrackModel{Database: db},
-			Users:     &models.UserModel{Database: db},
+	m := models.New(db)
+	app, err := folio.New(folio.Config{
+		Logger: logger,
+		Reload: *dev,
+		// Sessions live in Postgres (migration 000003), so logging out ends
+		// them on the server and they survive restarts.
+		SessionStore: m.Sessions,
+		Funcs:        pages.Funcs,
+		Globals: map[string]any{
+			"AppName":    "Moody",
+			"AppVersion": "0.1.0",
 		},
-	}
-
-	app.bufferPool = sync.Pool{
-		New: func() any {
-			return &bytes.Buffer{}
-		},
-	}
-
-	// Register the routes
-	mux := app.routes()
-
-	app.Logger.Info("Now listening on port http://127.0.0.1:" + *addr)
-
-	// Apply middleware chain: logging -> CSRF -> authentication -> routes
-	csrfMiddleware := middlewareApp.CSRFMiddleware()
-
-	middlewareChain := middlewareApp.LoggingMiddleware(
-		csrfMiddleware(
-			middlewareApp.AuthMiddleware(jwtManager)(mux),
-		),
-	)
-
-	err := http.ListenAndServe((":" + *addr), middlewareChain)
-
+	})
 	if err != nil {
-		panic(err.Error())
+		logger.Error("starting folio", "error", err)
+		os.Exit(1)
 	}
-}
 
-func main() {
-	app := &Application{}
-	app.startup()
+	app.Use(folio.RequestLogger(logger), folio.Recoverer(logger), folio.Compress())
+	pages.Register(app, &pages.Pages{Models: m, Playlists: playlist.NewGenerator(*openaiKey)})
+
+	if err := app.ListenAndServe(":" + *addr); err != nil {
+		logger.Error("server stopped", "error", err)
+		os.Exit(1)
+	}
 }

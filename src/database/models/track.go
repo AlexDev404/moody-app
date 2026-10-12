@@ -12,6 +12,7 @@ type Track struct {
 	Artist     string `json:"artist"`
 	Title      string `json:"title"`
 	YouTubeURL string `json:"youtube_url"`
+	Reason     string `json:"reason"`
 }
 
 type TrackModel struct {
@@ -20,8 +21,8 @@ type TrackModel struct {
 
 func (t *TrackModel) Insert(track *Track) error {
 	query := `
-		INSERT INTO tracks (artist, title, youtube_url, playlist_id)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO tracks (artist, title, youtube_url, playlist_id, reason)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -34,6 +35,7 @@ func (t *TrackModel) Insert(track *Track) error {
 		track.Title,
 		track.YouTubeURL,
 		track.PlaylistID,
+		track.Reason,
 	).Scan(&track.ID)
 }
 
@@ -61,9 +63,10 @@ func (t *TrackModel) Get(id string) (*Track, error) {
 
 func (t *TrackModel) GetAllForPlaylist(playlistID string) ([]Track, error) {
 	query := `
-		SELECT id, artist, title, youtube_url
-		FROM tracks 
-		WHERE playlist_id = $1`
+		SELECT id, artist, title, youtube_url, reason
+		FROM tracks
+		WHERE playlist_id = $1
+		ORDER BY created_at, id`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -82,13 +85,15 @@ func (t *TrackModel) GetAllForPlaylist(playlistID string) ([]Track, error) {
 			&track.Artist,
 			&track.Title,
 			&track.YouTubeURL,
+			&track.Reason,
 		)
 		if err != nil {
 			return nil, err
 		}
+		track.PlaylistID = playlistID
 		tracks = append(tracks, track)
 	}
-	return tracks, nil
+	return tracks, rows.Err()
 }
 
 func (t *TrackModel) GetAll() ([]Track, error) {

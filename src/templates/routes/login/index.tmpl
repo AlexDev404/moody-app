@@ -5,14 +5,12 @@
             <h1 class="text-3xl font-bold text-zinc-50 playfair">Login</h1>
         </div>
         <div class="uk-card-body">
-            {{if .Data.PageData.Error}}
+            {{if .Page.Failure}}
             <div class="bg-destructive/15 text-destructive p-3 rounded-md mb-4">
-                {{.Data.PageData.Error}}
+                {{.Page.Failure}}
             </div>
             {{end}}
-            <form method="POST" action="/login{{if .Data.PageData.NextURL}}?next={{.Data.PageData.NextURL}}{{end}}">
-                <!-- CSRF Protection -->
-                {{.Data.PageData.CSRFField}}
+            <form method="POST" action="/login{{if .Page.NextURL}}?next={{.Page.NextURL}}{{end}}">
                 
                 <div class="space-y-4">
                     <div>
@@ -21,7 +19,7 @@
                             type="email" 
                             id="email" 
                             name="email" 
-                            value="{{.Data.PageData.Email}}"
+                            value="{{.Page.Email}}"
                             class="uk-input w-full p-2 rounded-md border border-zinc-700 bg-zinc-800 text-zinc-100 focus:border-primary-glow focus:ring-1 focus:ring-primary-glow"
                             required
                         >
@@ -43,7 +41,7 @@
             </form>
         </div>
         <div class="uk-card-footer text-center border-t border-zinc-800">
-            <p class="text-zinc-300">Don't have an account? <a href="/register{{if .Data.PageData.NextURL}}?next={{.Data.PageData.NextURL}}{{end}}" class="text-primary-glow hover:underline">Register</a></p>
+            <p class="text-zinc-300">Don't have an account? <a href="/register{{if .Page.NextURL}}?next={{.Page.NextURL}}{{end}}" class="text-primary-glow hover:underline">Register</a></p>
         </div>
     </div>
 </div>

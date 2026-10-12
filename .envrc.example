@@ -11,3 +11,6 @@ export DB_SSLMODE="disable"
 
 # Construct connection string
 export DB_DSN="postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}"
+
+# API key for playlist generation (GitHub Models, OpenAI-compatible)
+export OPENAI_API_KEY="your-github-models-token"

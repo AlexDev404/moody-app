@@ -162,7 +162,7 @@ func (m *MoodModel) GetAll() ([]MoodEntry, error) {
 
 func (m *MoodModel) GetByID(id string) (*MoodEntry, error) {
 	query := `
-		SELECT id, created_at, mood_text, user_id
+		SELECT id, created_at, mood_text, COALESCE(user_id::text, '')
 		FROM mood_entries
 		WHERE id = $1`
 

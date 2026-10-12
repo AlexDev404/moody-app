@@ -5,9 +5,7 @@
             <h1 class="text-3xl font-bold text-zinc-50 playfair">Create an Account</h1>
         </div>
         <div class="uk-card-body">
-            <form method="POST" action="/register{{if .Data.PageData.NextURL}}?next={{.Data.PageData.NextURL}}{{end}}">
-                <!-- CSRF Protection -->
-                {{.Data.PageData.CSRFField}}
+            <form method="POST" action="/register{{if .Page.NextURL}}?next={{.Page.NextURL}}{{end}}">
                 
                 <div class="space-y-4">
                     <div>
@@ -16,12 +14,12 @@
                             type="email" 
                             id="email" 
                             name="email" 
-                            value="{{.Data.PageData.Email}}" 
-                            class="uk-input w-full p-2 rounded-md border border-zinc-700 bg-zinc-800 text-zinc-100 {{if index .Data.PageData.Errors "email"}}border-destructive{{end}} focus:border-primary-glow focus:ring-1 focus:ring-primary-glow"
+                            value="{{.Page.Email}}" 
+                            class="uk-input w-full p-2 rounded-md border border-zinc-700 bg-zinc-800 text-zinc-100 {{if index .Page.Errors "email"}}border-destructive{{end}} focus:border-primary-glow focus:ring-1 focus:ring-primary-glow"
                             required
                         >
-                        {{if index .Data.PageData.Errors "email"}}
-                            <p class="text-destructive text-sm mt-1">{{index .Data.PageData.Errors "email"}}</p>
+                        {{if index .Page.Errors "email"}}
+                            <p class="text-destructive text-sm mt-1">{{index .Page.Errors "email"}}</p>
                         {{end}}
                     </div>
                     <div>
@@ -30,11 +28,11 @@
                             type="password" 
                             id="password" 
                             name="password" 
-                            class="uk-input w-full p-2 rounded-md border border-zinc-700 bg-zinc-800 text-zinc-100 {{if index .Data.PageData.Errors "password"}}border-destructive{{end}} focus:border-primary-glow focus:ring-1 focus:ring-primary-glow"
+                            class="uk-input w-full p-2 rounded-md border border-zinc-700 bg-zinc-800 text-zinc-100 {{if index .Page.Errors "password"}}border-destructive{{end}} focus:border-primary-glow focus:ring-1 focus:ring-primary-glow"
                             required
                         >
-                        {{if index .Data.PageData.Errors "password"}}
-                            <p class="text-destructive text-sm mt-1">{{index .Data.PageData.Errors "password"}}</p>
+                        {{if index .Page.Errors "password"}}
+                            <p class="text-destructive text-sm mt-1">{{index .Page.Errors "password"}}</p>
                         {{end}}
                     </div>
                     <div>
@@ -43,11 +41,11 @@
                             type="password" 
                             id="password_confirm" 
                             name="password_confirm" 
-                            class="uk-input w-full p-2 rounded-md border border-zinc-700 bg-zinc-800 text-zinc-100 {{if index .Data.PageData.Errors "password_confirm"}}border-destructive{{end}} focus:border-primary-glow focus:ring-1 focus:ring-primary-glow" 
+                            class="uk-input w-full p-2 rounded-md border border-zinc-700 bg-zinc-800 text-zinc-100 {{if index .Page.Errors "password_confirm"}}border-destructive{{end}} focus:border-primary-glow focus:ring-1 focus:ring-primary-glow" 
                             required
                         >
-                        {{if index .Data.PageData.Errors "password_confirm"}}
-                            <p class="text-destructive text-sm mt-1">{{index .Data.PageData.Errors "password_confirm"}}</p>
+                        {{if index .Page.Errors "password_confirm"}}
+                            <p class="text-destructive text-sm mt-1">{{index .Page.Errors "password_confirm"}}</p>
                         {{end}}
                     </div>
                     <div>
@@ -57,7 +55,7 @@
             </form>
         </div>
         <div class="uk-card-footer text-center border-t border-zinc-800">
-            <p class="text-zinc-300">Already have an account? <a href="/login{{if .Data.PageData.NextURL}}?next={{.Data.PageData.NextURL}}{{end}}" class="text-primary-glow hover:underline">Login</a></p>
+            <p class="text-zinc-300">Already have an account? <a href="/login{{if .Page.NextURL}}?next={{.Page.NextURL}}{{end}}" class="text-primary-glow hover:underline">Login</a></p>
         </div>
     </div>
 </div>

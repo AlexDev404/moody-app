@@ -203,3 +203,43 @@ func (p *PlaylistModel) GetAll() ([]Playlist, error) {
 	}
 	return playlists, nil
 }
+
+// InsertWithTracks saves a playlist and its tracks in one transaction, so a
+// failure part-way through doesn't leave a half-filled playlist behind.
+func (p *PlaylistModel) InsertWithTracks(playlist *Playlist, tracks []Track) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	tx, err := p.Database.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	err = tx.QueryRowContext(ctx, `
+		INSERT INTO playlists (name, mood_id, user_id)
+		VALUES ($1, $2, $3)
+		RETURNING id, created_at`,
+		playlist.Name, playlist.MoodID, playlist.UserID,
+	).Scan(&playlist.ID, &playlist.CreatedAt)
+	if err != nil {
+		return err
+	}
+
+	// clock_timestamp() (unlike NOW()) advances within a transaction, so
+	// created_at keeps the tracks in the model's order.
+	for i := range tracks {
+		tracks[i].PlaylistID = playlist.ID
+		err = tx.QueryRowContext(ctx, `
+			INSERT INTO tracks (artist, title, youtube_url, playlist_id, reason, created_at)
+			VALUES ($1, $2, $3, $4, $5, clock_timestamp())
+			RETURNING id`,
+			tracks[i].Artist, tracks[i].Title, tracks[i].YouTubeURL, playlist.ID, tracks[i].Reason,
+		).Scan(&tracks[i].ID)
+		if err != nil {
+			return err
+		}
+	}
+	playlist.Tracks = tracks
+	return tx.Commit()
+}

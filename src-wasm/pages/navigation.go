@@ -43,8 +43,17 @@ func setupNavigationItems(navElement js.Value) {
 		item.Call("addEventListener", "click", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 			args[0].Call("preventDefault")
 
-			// Push the new state
-			js.Global().Get("history").Call("pushState", nil, "", href)
+			// Items marked data-reload (e.g. Logout) change the navigation
+			// itself, so they get a full page load; the rest load in place.
+			if item.Call("hasAttribute", "data-reload").Bool() {
+				window.Get("location").Call("assign", href)
+				return nil
+			}
+			if folio := window.Get("folio"); folio.Truthy() {
+				folio.Call("navigate", href)
+			} else {
+				js.Global().Get("history").Call("pushState", nil, "", href)
+			}
 
 			// Update active item
 			updateActiveNavigationItem()

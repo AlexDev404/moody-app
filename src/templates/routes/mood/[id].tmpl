@@ -1,0 +1,57 @@
+<main class="flex flex-col items-center">
+    <section class="flex flex-col pt-20 pb-64 justify-center items-center gap-12 self-stretch flex-1">
+        <section class="flex flex-col py-2 px-20 justify-center items-center gap-32 self-stretch flex-1">
+            {{ with .Model }}
+            <headline class="flex flex-col gap-20 py-16 justify-center items-center w-full">
+                <ux-headline-inner class="flex flex-col gap-4 items-center w-full">
+                    {{ with $.Flash }}<p class="text-emerald-500 text-sm">{{ . }}</p>{{ end }}
+                    <h1 class="uk-h1 playfair">Your Playlist</h1>
+                    <h2 class="uk-h2">{{ .Mood.MoodText }}</h2>
+                </ux-headline-inner>
+                {{ if .Playlist }}{{ template "partial/ux/music_player" $ }}{{ end }}
+            </headline>
+
+            {{ if .Playlist }}
+            <ux-past-playlists-body class="flex flex-col items-start gap-8 self-stretch">
+                {{ range .Tracks }}
+                <ux-border-glow class="p-1 rounded-md w-full flex items-center justify-start">
+                    <ux-past-playlist-item class="flex p-4 items-start gap-4 bg-zinc-900 rounded-lg self-stretch w-full">
+                        <ux-avatar src="https://ui-avatars.com/api/?background=random"></ux-avatar>
+                        <ux-past-playlist-item-inner class="flex flex-col items-start gap-2 self-stretch">
+                            <ux-past-playlist-item-header>
+                                <h3 class="uk-h3">{{ .Title }}</h3>
+                            </ux-past-playlist-item-header>
+                            <ux-past-playlist-item-body class="flex flex-col items-start gap-6 self-stretch">
+                                <p>{{ .Artist }}</p>
+                                {{ with .Reason }}<i><p>{{ CapitalizeFirst . }}</p></i>{{ end }}
+                                <button class="uk-btn bg-primary-glow text-zinc-900" onclick="window.pipedPlayer.play('{{ .Title }} (audio)')">
+                                    Listen to this track
+                                </button>
+                            </ux-past-playlist-item-body>
+                        </ux-past-playlist-item-inner>
+                    </ux-past-playlist-item>
+                </ux-border-glow>
+                {{ end }}
+            </ux-past-playlists-body>
+            {{ else }}
+            <form id="generate-playlist" method="POST" action="/mood/{{ .Mood.ID }}" data-folio-form class="flex flex-col items-center gap-4">
+                {{ with $.Page.Failure }}
+                <p class="text-red-500 text-sm">{{ . }}</p>
+                <button type="submit" class="uk-btn bg-primary-glow text-zinc-900">Try again</button>
+                {{ else }}
+                <div data-uk-spinner></div>
+                <p>Creating a playlist for your mood…</p>
+                <noscript><button type="submit" class="uk-btn bg-primary-glow text-zinc-900">Create playlist</button></noscript>
+                {{ end }}
+            </form>
+            {{ if not $.Page.Failure }}
+            <script>
+                // Start creating the playlist straight away; the response replaces this page.
+                document.getElementById("generate-playlist").requestSubmit();
+            </script>
+            {{ end }}
+            {{ end }}
+            {{ end }}
+        </section>
+    </section>
+</main>

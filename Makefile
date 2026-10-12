@@ -76,6 +76,7 @@ endif
 initialize:
 	@echo "The operating system of this computer is: $(BUILD_PLATFORM)"
 	@echo "The processor architecture of this system is: $(BUILD_ARCH)"
+	git submodule update --init
 	cd $(SRC_DIR) && $(GO) mod download
 	cd $(SRC_WASM_DIR) && $(GO) mod download
 	
@@ -97,14 +98,14 @@ run: build-web copy-wasm
 ifeq ($(BUILD_PLATFORM),LINUX)
 # WSL detection
 ifeq ($(WSL_CHECK),true)
-	cd $(SRC_DIR) && npm run dev -- . --dsn ${DB_DSN} --openai-key ${OPENAI_API_KEY} --jwt-secret ${JWT_SECRET}
+	cd $(SRC_DIR) && npm run dev -- . --dsn ${DB_DSN} --openai-key ${OPENAI_API_KEY}
 else
-	cd $(SRC_DIR) && npm run gow -- . --dsn ${DB_DSN} --openai-key ${OPENAI_API_KEY} --jwt-secret ${JWT_SECRET}
+	cd $(SRC_DIR) && npm run gow -- . --dsn ${DB_DSN} --openai-key ${OPENAI_API_KEY}
 endif
 
 else
 ifeq ($(BUILD_PLATFORM),WIN32)
-	cd $(SRC_DIR) && go run . --openai-key ${OPENAI_API_KEY} --dsn ${DB_DSN} --jwt-secret ${JWT_SECRET}
+	cd $(SRC_DIR) && go run . --openai-key ${OPENAI_API_KEY} --dsn ${DB_DSN}
 endif
 endif
 

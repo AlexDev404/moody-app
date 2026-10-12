@@ -5,10 +5,11 @@ export class Piped {
     // this.apiUrl = "https://pipedapi.ducks.party";
     // this.apiUrl = "https://pipedapi.kavin.rocks";
     this.playerId = "piped:audio";
+    this.spinnerId = "piped:spinner";
     this.playerElement = null;
     this.playerInstance = null;
     this.volume = 1.0; // Default volume
-    this.spinner = "piped:spinner";
+    this.spinner = null;
     this.loadingSpinner = document.createElement("div");
     this.loadingSpinner.setAttribute("data-uk-spinner", "");
     // Player states
@@ -22,20 +23,25 @@ export class Piped {
     this.state = this.STATE.STOPPED; // Default state
   }
 
+  // init runs after every page load: the spinner is part of the playlist
+  // page, while the <audio> element and its listeners are set up only once.
   init() {
     this.playerElement = document.getElementById(this.playerId);
-    this.spinner = document.getElementById(this.spinner);
-    if (!this.playerElement || !this.spinner) {
-      console.error(
-        `Player element with ID ${this.playerId} or spinner not found.`
-      );
+    this.spinner = document.getElementById(this.spinnerId);
+    if (!this.playerElement) {
+      console.error(`Player element with ID ${this.playerId} not found.`);
+      return;
     }
-    this.playerElement.volume = this.volume; // Set initial volume
-    this.playerElement.addEventListener("ended", () => {
-      this.updateState(this.STATE.STOPPED); // Update state to STOPPED when video ends
-    });
+    // Show the spinner again if a track is still loading on the new page.
+    if (this.spinner && this.state === this.STATE.LOADING) {
+      this.spinner.appendChild(this.loadingSpinner);
+    }
 
     if (!window._playerStateChangeListener) {
+      this.playerElement.volume = this.volume; // Set initial volume
+      this.playerElement.addEventListener("ended", () => {
+        this.updateState(this.STATE.STOPPED); // Update state to STOPPED when video ends
+      });
       console.log("piped:init");
       // Create new player instance and remove spinner when ready
       document.addEventListener("piped:external_playerStateChange", (e) => {
@@ -64,11 +70,7 @@ export class Piped {
   }
 
   removeSpinner = () => {
-    if (this.spinner.contains(this.loadingSpinner)) {
-      this.spinner.removeChild(this.loadingSpinner);
-    } else {
-      console.warn("piped:spinner not found in the spinner element.");
-    }
+    this.loadingSpinner.remove();
   };
 
   // Setter for volume
@@ -91,7 +93,7 @@ export class Piped {
       return;
     }
     console.log(`Player state updated from ${this.state} to ${newState}`);
-    if (newState === this.STATE.LOADING) {
+    if (newState === this.STATE.LOADING && this.spinner) {
       this.spinner.appendChild(this.loadingSpinner);
     }
     if (newState === this.STATE.PLAYING) {

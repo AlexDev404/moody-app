@@ -1,18 +1,14 @@
 {{define "index"}}
 <script defer>
 	window.trackEventListener(document, "appLoad", function () {
-		const emotionsFelt = {{ .Data.PageData.emotions_felt}};
+		const emotionsFelt = {{ .Page.emotions_felt}};
 		const bar = document.getElementById("mood-meter");
 
-		// Use a for loop to animate the progress bar
-		for(var counter = 0; counter <= emotionsFelt; counter ++) {
-			setTimeout(function() {
-				bar.value += counter;
-			}, 20 * (counter / 2));
-		}
-		const moodButton = document.getElementById("mood-button");
-		if (moodButton) {
-			moodButton.click();
+		// Animate the progress bar up to the number of emotions felt today
+		for (let counter = 1; counter <= emotionsFelt; counter++) {
+			setTimeout(function () {
+				bar.value = counter;
+			}, 10 * counter);
 		}
 	});
 </script>
@@ -21,21 +17,13 @@
 	<!-- Dynamic "mood meter" -->
 	<div class="flex flex-col items-center self-stretch gap-2">
 		<mood-meter-label class="w-full">
-			<p class="uk-text-sm">{{ .Data.PageData.emotions_felt }} Emotions Felt Today So Far</p>
+			<p class="uk-text-sm">{{ .Page.emotions_felt }} Emotions Felt Today So Far</p>
 		</mood-meter-label>
 		<progress id="mood-meter" class="uk-progress" value="0" max="100"></progress>
 	</div>
 	<!-- Content -->
 	<section class="flex flex-col py-2 px-20 justify-center items-center gap-12 self-stretch flex-1">
-		{{ template "partial/home/headline" . }} {{ if .Data.PageData.mood_id }}
-		<form method="POST" action="/mood">
-			<!-- CSRF Protection -->
-			{{.Data.PageData.CSRFField}}
-			
-			<input type="hidden" name="mood_id" value="{{ .Data.PageData.mood_id }}" />
-			<button type="submit" class="hidden" id="mood-button"></button>
-		</form>
-		{{ end }}
+		{{ template "partial/home/headline" . }}
 	</section>
 </main>
 {{end}}

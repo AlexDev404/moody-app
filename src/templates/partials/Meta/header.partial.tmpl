@@ -8,8 +8,8 @@
             </div>
         
             <div class="flex items-center space-x-4">
-                {{if .Data.PageData.IsAuthenticated}}
-                    <span class="text-sm">{{.Data.PageData.User.Email}}</span>
+                {{if .Page.IsAuthenticated}}
+                    <span class="text-sm">{{.Page.User.Email}}</span>
                     <a href="/logout" class="px-3 py-2 rounded-md bg-zinc-800 hover:bg-zinc-700 transition-colors">Logout</a>
                 {{else}}
                     <a href="/login" class="px-3 py-2 rounded-md bg-zinc-800 hover:bg-zinc-700 transition-colors">Login</a>
