@@ -11,8 +11,8 @@
   {{template "footer" .}}
   </body>
   <script>
-    // Initialize the lucide icon library
-    lucide.createIcons();
+    // Initialize the lucide icon library on first load and after each navigation
+    document.addEventListener("appLoad", () => lucide.createIcons());
   </script>
 </html>
 {{end}}

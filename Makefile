@@ -76,6 +76,7 @@ endif
 initialize:
 	@echo "The operating system of this computer is: $(BUILD_PLATFORM)"
 	@echo "The processor architecture of this system is: $(BUILD_ARCH)"
+	git submodule update --init
 	cd $(SRC_DIR) && $(GO) mod download
 	cd $(SRC_WASM_DIR) && $(GO) mod download
 	

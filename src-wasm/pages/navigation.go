@@ -43,8 +43,12 @@ func setupNavigationItems(navElement js.Value) {
 		item.Call("addEventListener", "click", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 			args[0].Call("preventDefault")
 
-			// Push the new state
-			js.Global().Get("history").Call("pushState", nil, "", href)
+			// Navigate in place with the folio client, or fall back to just pushing the state
+			if folio := window.Get("folio"); folio.Truthy() {
+				folio.Call("navigate", href)
+			} else {
+				js.Global().Get("history").Call("pushState", nil, "", href)
+			}
 
 			// Update active item
 			updateActiveNavigationItem()

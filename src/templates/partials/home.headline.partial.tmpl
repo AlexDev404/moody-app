@@ -4,12 +4,12 @@
 		<h1 class="uk-h1 playfair">How are you feeling today?</h1>
 	</headline>
 	<div class="flex flex-col gap-8">
-		<form method="POST" action="/">
+		<form method="POST" action="/" data-folio-form>
 			<div class="flex flex-col items-start gap-2 self-stretch">
 				<div data-uk-form-custom class="flex items-start w-full gap-2">
 					<div class="block flex-1">
-						<p class ="text-red-500 text-sm">{{ .Data.PageData.Errors.mood }}</p>
-						<p class ="text-emerald-500 text-sm">{{ .Data.PageData.Message }}</p>
+						<p class ="text-red-500 text-sm">{{ index .Page.Errors "mood" }}</p>
+						<p class ="text-emerald-500 text-sm">{{ .Flash }}</p>
 						<input
 							type="text"
 							id="mood-input"
@@ -23,7 +23,7 @@
 					<button type="submit" class="uk-btn bg-primary-glow text-zinc-900">Check In</button>
 				</div>
 				<div class="uk-form-help" id="mood-help-block">
-					<p class="text-red-500 text-sm">{{ .Data.PageData.Failure }}</p>
+					<p class="text-red-500 text-sm">{{ .Page.Failure }}</p>
 					You can be as descriptive or non-descriptive as you want.
 				</div>
 			</div>

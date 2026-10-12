@@ -9,7 +9,7 @@
    <meta name="apple-mobile-web-app-capable" content="yes" />
 
    <!-- Tailwind CSS -->
-   <link rel="stylesheet" href="/static/style.css" />
+   <link rel="stylesheet" href="{{asset "style.css"}}" />
 
    <!-- franken/ui -->
    <script
@@ -35,14 +35,10 @@
 	  WebAssembly.instantiateStreaming(
 		 fetch("/static/wasm/bundle/main.wasm"),
 		 go.importObject,
-	  ).then((result) => {
-		 go.run(result.instance);
-		 go_setpath("{{ .Data.Path }}"); // Should be replaced with the actual path after execution
-	  });
+	  ).then((result) => go.run(result.instance));
    </script>
 
-   <!-- Experimental: Using Popstate API for SPA navigation -->
-   <script src="/static/lifecycle/patches.js"></script>
-   <script src="/static/lifecycle/lifecycle.js" type="module"></script>
+   <!-- folio client: in-place navigation and lifecycle cleanup -->
+   {{template "folio/head" .}}
 </head>
 {{end}}
