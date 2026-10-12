@@ -66,6 +66,15 @@ func (s *SessionStore) Delete(ctx context.Context, id string) error {
 	return err
 }
 
+// Ready checks that the sessions table exists, so a missing migration is
+// reported at startup instead of every login silently failing.
+func (s *SessionStore) Ready(ctx context.Context) error {
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+	_, err := s.Database.ExecContext(ctx, `SELECT 1 FROM sessions LIMIT 1`)
+	return err
+}
+
 // DeleteForUser ends every session a user has, e.g. after a password change.
 func (s *SessionStore) DeleteForUser(ctx context.Context, userID string) error {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)

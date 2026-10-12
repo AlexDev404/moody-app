@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log/slog"
 	"os"
@@ -39,6 +40,13 @@ flag --dsn=URL`)
 	logger.Info("database connection pool established")
 
 	m := models.New(db)
+	if err := m.Sessions.Ready(context.Background()); err != nil {
+		logger.Error(err.Error())
+		logger.Error(`Logins are stored in the sessions table, which this database doesn't have yet.
+Create it by running migrations/000003_add_sessions.up.sql against the database, e.g.
+  psql "$DB_DSN" -f ../migrations/000003_add_sessions.up.sql`)
+		os.Exit(1)
+	}
 	app, err := folio.New(folio.Config{
 		Logger: logger,
 		Reload: *dev,
